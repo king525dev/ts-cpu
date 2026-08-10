@@ -1,6 +1,6 @@
 class Stack {
     private data: Uint8Array;
-    private sp: number;   // stack pointer (0 = empty)
+    private sp: number;   // Stack Pointer
 
     constructor(size = 256) {
         this.data = new Uint8Array(size);

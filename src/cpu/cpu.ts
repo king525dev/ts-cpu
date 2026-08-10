@@ -1,0 +1,67 @@
+class CPU {
+    stack: Stack;
+    alu: ALU;
+    program: Uint8Array;
+    pc: number;
+    running: boolean;
+
+    constructor() {
+        this.stack = new Stack();
+        this.alu = new ALU();
+        this.program = new Uint8Array(0);
+        this.pc = 0;
+        this.running = false;
+    }
+
+    load(bytecode: number[]) {
+        this.program = new Uint8Array(bytecode);
+        this.pc = 0;
+    }
+
+    step(): boolean {
+        if (!this.running) return false;
+        const opcode = this.program[this.pc++];
+
+        switch (opcode) {
+        case 0x01: {  // LDA
+            const value = this.program[this.pc++];
+            this.stack.push(value);
+            break;
+        }
+        case 0x02: {  // DCD
+            const ch = String.fromCharCode(this.stack.pop());
+            console.log(ch);
+            break;
+        }
+        case 0x03: this.stack.pop(); break;
+        case 0x04: this.stack.nip(); break;
+        case 0x05: this.stack.swap(); break;
+        case 0x06: this.stack.dup(); break;
+        case 0x07: this.stack.ovr(); break;
+        case 0x08: this.stack.rot(); break;
+        case 0x09: this.stack.clr(); break;
+        case 0x10: { const a = this.stack.pop(); const b = this.stack.pop(); this.stack.push(this.alu.exec("ADD", b, a)); break; }
+        case 0x11: { const a = this.stack.pop(); const b = this.stack.pop(); this.stack.push(this.alu.exec("SUB", b, a)); break; }
+        // ... other ALU ops similarly ...
+        case 0x20: console.log(this.stack.peek()); break;
+        case 0x21: {
+            // LOG: print all stack items
+            for (let i = 0; i < this.stack.sp; i++) {
+            process.stdout.write(`${this.stack.data[i]} `);
+            }
+            console.log();
+            break;
+        }
+        case 0xFF: this.running = false; break;
+        default: throw new Error(`Unknown opcode: 0x${opcode.toString(16)}`);
+        }
+        return this.running;
+    }
+
+    run() {
+        this.running = true;
+        while (this.running) {
+        this.step();
+        }
+    }
+}

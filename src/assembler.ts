@@ -1,11 +1,18 @@
 function parseNumber(token: string): number {
-    if (token.startsWith("0x")) {
-        return parseInt(token, 16);
+    if (/^(?:0[xX][0-9a-fA-F]+)$/.test(token)) {
+        return parseInt(token, 16); // Parse Hex
+    } else if (/^(?:0[bB][01]+)$/.test(token)){
+        return parseInt(token, 2); // Parse Binary
     }
     return parseInt(token, 10);
 }
 
-class Assembler {
+function isValidNumber(char: string): boolean {
+    // Checks if it is a decimal, hex or binary number
+    return /^(?:[0-9]+|0[xX][0-9a-fA-F]+|0[bB][01]+)$/.test(char);
+}
+
+export default class Assembler {
     private opcodes: { [mnemonic: string]: number } = {
         LDA: 0x01, DCD: 0x02, POP: 0x03, NIP: 0x04, SWP: 0x05, DUP: 0x06,
         OVR: 0x07, ROT: 0x08, CLR: 0x09,
@@ -20,16 +27,31 @@ class Assembler {
         const bytecode: number[] = [];
         const lines = source.split("\n");
         for (let line of lines) {
-            line = line.split(";")[0].trim();  // remove comments, trim
-            if (line === "") continue;
+
+            if (line.includes(';')){
+                const end = line.indexOf(';');
+                line = line.slice(0, end); // remove comments
+            }
+
+            line = line.trim();
+
+            if (line === "" || typeof line === undefined) continue;
+
             const tokens = line.split(/\s+/);
-            const mnemonic = tokens[0].toUpperCase();
-            const opcode = this.opcodes[mnemonic];
-            if (opcode === undefined) throw new Error(`Unknown instruction: ${mnemonic}`);
-            bytecode.push(opcode);
-            if (mnemonic === "LDA") {
-                const value = parseNumber(tokens[1]);
-                bytecode.push(value & 0xFF);
+            for (let token in tokens){
+                if (!isValidNumber(token)){
+                    const mnemonic = token.toUpperCase();
+                    const opcode = this.opcodes[mnemonic];
+                    if (opcode === undefined) throw new Error(`Unknown instruction: ${mnemonic}`);
+                    bytecode.push(opcode);
+                    if (mnemonic === "LDA") {
+                        const indexOfValue = tokens.indexOf(token) + 1;
+                        if (tokens[indexOfValue] && isValidNumber(tokens[indexOfValue])){
+                            const value = parseNumber(tokens[ indexOfValue ]);
+                            bytecode.push(value & 0xFF);
+                        }
+                    }
+                }
             }
         }
         return bytecode;

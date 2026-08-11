@@ -1,7 +1,7 @@
 import ALU from "./alu.js";
 import Stack from './stack.js';
 
-class CPU {
+export default class CPU {
     stack: Stack;
     alu: ALU;
     program: Uint8Array;

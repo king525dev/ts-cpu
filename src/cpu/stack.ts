@@ -26,6 +26,7 @@ export default class Stack {
         } else {
             this.data[--this.sp];
         }
+        
         return ((this.data[this.sp++]) ?? 0);
     }
 

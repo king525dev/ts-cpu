@@ -1,3 +1,6 @@
+import ALU from "./alu.js";
+import Stack from './stack.js';
+
 class CPU {
     stack: Stack;
     alu: ALU;
@@ -23,37 +26,83 @@ class CPU {
         const opcode = this.program[this.pc++];
 
         switch (opcode) {
-        case 0x01: {  // LDA
-            const value = this.program[this.pc++];
-            this.stack.push(value);
-            break;
-        }
-        case 0x02: {  // DCD
-            const ch = String.fromCharCode(this.stack.pop());
-            console.log(ch);
-            break;
-        }
-        case 0x03: this.stack.pop(); break;
-        case 0x04: this.stack.nip(); break;
-        case 0x05: this.stack.swap(); break;
-        case 0x06: this.stack.dup(); break;
-        case 0x07: this.stack.ovr(); break;
-        case 0x08: this.stack.rot(); break;
-        case 0x09: this.stack.clr(); break;
-        case 0x10: { const a = this.stack.pop(); const b = this.stack.pop(); this.stack.push(this.alu.exec("ADD", b, a)); break; }
-        case 0x11: { const a = this.stack.pop(); const b = this.stack.pop(); this.stack.push(this.alu.exec("SUB", b, a)); break; }
-        // ... other ALU ops similarly ...
-        case 0x20: console.log(this.stack.peek()); break;
-        case 0x21: {
-            // LOG: print all stack items
-            for (let i = 0; i < this.stack.sp; i++) {
-            process.stdout.write(`${this.stack.data[i]} `);
+            case 0x01: {
+                const value = this.program[this.pc++];
+                if (value) {
+                    this.stack.push(value);
+                } else {
+                    throw new Error(`LDA instruction needs accompanying parameter`);
+                }
+                break;
             }
-            console.log();
-            break;
-        }
-        case 0xFF: this.running = false; break;
-        default: throw new Error(`Unknown opcode: 0x${opcode.toString(16)}`);
+            case 0x02: {
+                const ch = String.fromCharCode(this.stack.pop());
+                console.log(ch);
+                break;
+            }
+            case 0x03:{
+                this.stack.pop(); 
+                break;
+            }
+            case 0x04:{
+                this.stack.nip(); 
+                break;
+            } 
+            case 0x05: {
+                this.stack.swap(); 
+                break;
+            }
+            case 0x06: {
+                this.stack.dup(); 
+                break;
+            }
+            case 0x07:{
+                this.stack.ovr(); 
+                break;
+            }
+            case 0x08: {
+                this.stack.rot(); 
+                break;
+            }
+            case 0x09: {
+                this.stack.clr(); 
+                break;
+            }
+            case 0x10: { 
+                const a = this.stack.pop(); 
+                const b = this.stack.pop(); 
+                this.stack.push(this.alu.exec("ADD", b, a)); 
+                break; 
+            }
+            case 0x11: { 
+                const a = this.stack.pop(); 
+                const b = this.stack.pop(); 
+                this.stack.push(this.alu.exec("SUB", b, a)); 
+                break; 
+            }
+            case 0x20: {
+                console.log(this.stack.peek()); 
+                break;
+            }
+            case 0x21: {
+                // LOG: print all stack items
+                for (let i = 0; i < this.stack.getStackPointer(); i++) {
+                //process.stdout.write(`${this.stack.getStackData()[i]} `);
+                console.log(`${this.stack.getStackData()[i]} `)
+                }
+                break;
+            }
+            case 0xFF: {
+                this.running = false; 
+                break;
+            }
+            default: {
+                if (opcode){
+                    throw new Error(`Unknown opcode: 0x${opcode.toString(16)}`);
+                } else {
+                    throw new Error(`Unknown opcode: Opcode is undefined.`);
+                }
+            }
         }
         return this.running;
     }

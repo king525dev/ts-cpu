@@ -1,4 +1,4 @@
-class Stack {
+export default class Stack {
     private data: Uint8Array;
     private sp: number;   // Stack Pointer
 
@@ -7,22 +7,30 @@ class Stack {
         this.sp = 0;
     }
 
-    push(value: any): void {
+    getStackPointer(): number {
+        return this.sp;
+    }
+
+    getStackData(): Uint8Array {
+        return this.data;
+    }
+
+    push(value: number): void {
         if (this.sp >= this.data.length) throw new Error("Stack overflow");
         this.data[this.sp++] = value & 0xFF;
     }
 
-    pop(): any{
+    pop(): number{
         if (this.sp === 0){
             throw new Error("Stack underflow");
         } else {
             this.data[--this.sp];
         }
-        return this.data[this.sp++]
+        return ((this.data[this.sp++]) ?? 0);
     }
 
-    peek(offset = 0): number|undefined {
-        return this.data[this.sp - 1 - offset];
+    peek(offset = 0): number {
+        return ((this.data[this.sp - 1 - offset]) ?? 0);
     }
 
     dup(): void {

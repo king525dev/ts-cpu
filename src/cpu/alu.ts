@@ -1,4 +1,4 @@
-class ALU {
+export default class ALU {
     exec(op: string, a: number, b: number = 0): number {
         switch (op) {
         case "ADD": return (a + b) & 0xFF;

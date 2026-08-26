@@ -27,7 +27,7 @@ export default class Stack {
             this.data[--this.sp];
         }
         
-        return ((this.data[this.sp++]) ?? 0);
+        return ((this.data[this.sp]) ?? 0);
     }
 
     peek(offset = 0): number {

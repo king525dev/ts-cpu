@@ -34,12 +34,12 @@ export default class Assembler {
             }
 
             line = line.trim();
-
             if (line === "" || typeof line === undefined) continue;
 
             const tokens = line.split(/\s+/);
-            for (let token in tokens){
-                if (!isValidNumber(token)){
+
+            for (const token of tokens){
+                if (token in this.opcodes){
                     const mnemonic = token.toUpperCase();
                     const opcode = this.opcodes[mnemonic];
                     if (opcode === undefined) throw new Error(`Unknown instruction: ${mnemonic}`);
@@ -54,6 +54,7 @@ export default class Assembler {
                 }
             }
         }
+
         return bytecode;
     }
 }

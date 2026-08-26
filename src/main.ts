@@ -9,6 +9,7 @@ OUT      ; prints 30
 BRK
 `;
 
+
 const assembler = new Assembler();
 const bytecode = assembler.assemble(source);
 const cpu = new CPU();

@@ -71,6 +71,7 @@ export default class CPU {
             case 0x10: { 
                 const a = this.stack.pop(); 
                 const b = this.stack.pop(); 
+
                 this.stack.push(this.alu.exec("ADD", b, a)); 
                 break; 
             }

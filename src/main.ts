@@ -2,10 +2,26 @@ import Assembler  from "./assembler.js";
 import CPU from "./cpu/cpu.js";
 
 const source = `
-LDA 0x0A
-LDA 20
-ADD
-OUT      ; prints 30
+LDA 100
+LDA 108
+LDA 114
+LDA 111
+LDA 87
+LDA 111
+LDA 108
+LDA 108
+LDA 101
+LDA 104
+DCD 
+DCD
+DCD
+DCD
+DCD
+DCD 
+DCD
+DCD
+DCD
+DCD
 BRK
 `;
 

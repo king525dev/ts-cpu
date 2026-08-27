@@ -1,6 +1,6 @@
 import Stack from './stack.js';
 
-class Display {
+export default class Display {
     private ctx: CanvasRenderingContext2D;
     constructor(canvas: HTMLCanvasElement) {
         this.ctx = canvas.getContext("2d")!;

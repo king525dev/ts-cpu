@@ -1,9 +1,11 @@
 import ALU from "./alu.js";
 import Stack from './stack.js';
+import Display from './display.js';
 
 export default class CPU {
     stack: Stack;
     alu: ALU;
+    //display: Display;
     program: Uint8Array;
     pc: number;
     running: boolean;
@@ -92,6 +94,14 @@ export default class CPU {
                 }
                 break;
             }
+            // case 0x22: {
+            //     this.display.printStack(this.stack.getStackData())
+            //     break;
+            // }
+            // case 0x23: {
+            //     this.display.showTop(this.stack.peek())
+            //     break;
+            // }
             case 0xFF: {
                 this.running = false; 
                 break;

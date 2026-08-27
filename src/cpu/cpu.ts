@@ -5,8 +5,9 @@ import Display from './display.js';
 export default class CPU {
     stack: Stack;
     alu: ALU;
-    //display: Display;
+    // display: Display;
     program: Uint8Array;
+    ram: Uint8Array;
     pc: number;
     running: boolean;
 
@@ -14,6 +15,8 @@ export default class CPU {
         this.stack = new Stack();
         this.alu = new ALU();
         this.program = new Uint8Array(0);
+        // this.display = new Display(new HTMLCanvasElement)
+        this.ram = new Uint8Array(0);
         this.pc = 0;
         this.running = false;
     }
@@ -95,7 +98,7 @@ export default class CPU {
                 break;
             }
             // case 0x22: {
-            //     this.display.printStack(this.stack.getStackData())
+            //     this.display.printStack(this.stack)
             //     break;
             // }
             // case 0x23: {

@@ -7,9 +7,18 @@ function parseNumber(token: string): number {
     return parseInt(token, 10);
 }
 
-function isValidNumber(char: string): boolean {
+function isValidNumber(char: string, type?: "hex" | "dec" | "bin" | "all"): boolean {
     // Checks if it is a decimal, hex or binary number
-    return /^(?:[0-9]+|0[xX][0-9a-fA-F]+|0[bB][01]+)$/.test(char);
+    switch (type){
+        case "hex":
+            return /^(?:0[xX][0-9a-fA-F]+)$/.test(char);
+        case "bin":
+            return /^(?:0[bB][01]+)$/.test(char);
+        case "dec":
+            return /^(?:[0-9]+)$/.test(char);
+        default:
+            return /^(?:[0-9]+|0[xX][0-9a-fA-F]+|0[bB][01]+)$/.test(char);
+    }
 }
 
 export default class Assembler {
@@ -19,9 +28,15 @@ export default class Assembler {
         ADD: 0x10, SUB: 0x11, MUL: 0x12, DIV: 0x13, MOD: 0x14,
         AND: 0x15, ORA: 0x16, EOR: 0x17, NOT: 0x18,
         INC: 0x19, DEC: 0x1A, SHL: 0x1B, SHR: 0x1C, NEG: 0x1D,
-        OUT: 0x20, LOG: 0x21, PRT: 0x22, SHW: 0x23,
+        OUT: 0x20, LOG: 0x21, PRT: 0x22, SHW: 0x23, STA: 0x24, LDR: 0x25,
         BRK: 0xFF,
     };
+
+    private opcodesWithParameters: string[]  = [
+        "LDA", 
+        "STA",
+        "LDR",
+    ]
 
     assemble(source: string): number[] {
         const bytecode: number[] = [];
@@ -44,13 +59,13 @@ export default class Assembler {
                     const opcode = this.opcodes[mnemonic];
                     if (opcode === undefined) throw new Error(`Unknown instruction: ${mnemonic}`);
                     bytecode.push(opcode);
-                    if (mnemonic === "LDA") {
+                    if (this.opcodesWithParameters.includes(mnemonic)) {
                         const indexOfValue = tokens.indexOf(token) + 1;
                         if (tokens[indexOfValue] && isValidNumber(tokens[indexOfValue])){
                             const value = parseNumber(tokens[ indexOfValue ]);
                             bytecode.push(value & 0xFF);
                         }
-                    }
+                    } 
                 }
             }
         }

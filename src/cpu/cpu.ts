@@ -1,13 +1,14 @@
 import ALU from "./alu.js";
 import Stack from './stack.js';
 import Display from './display.js';
+import RAM from "./ram.js";
 
 export default class CPU {
     stack: Stack;
     alu: ALU;
     // display: Display;
     program: Uint8Array;
-    ram: Uint8Array;
+    ram: RAM;
     pc: number;
     running: boolean;
 
@@ -16,7 +17,7 @@ export default class CPU {
         this.alu = new ALU();
         this.program = new Uint8Array(0);
         // this.display = new Display(new HTMLCanvasElement)
-        this.ram = new Uint8Array(0);
+        this.ram = new RAM();
         this.pc = 0;
         this.running = false;
     }
@@ -105,6 +106,40 @@ export default class CPU {
             //     this.display.showTop(this.stack.peek())
             //     break;
             // }
+            case 0x24: {
+                const addr = this.program[this.pc++];
+                if (addr) {
+                    const value = this.stack.pop();
+
+                    if (addr == 0){
+                        this.ram.addDataAtFreeAddress(value)
+                    } else {
+                        this.ram.writeDataAt(addr, value);
+                    }
+
+                } else {
+                    throw new Error(`STA instruction needs accompanying address parameter, use 0x00 if unsure`);
+                }
+                break;
+            }
+            case 0x25: {
+                const addr = this.program[this.pc++];
+                if (addr) {
+                    if (addr == 0){
+                        this.stack.push(
+                            this.ram.getLastLoadedValue()
+                        )
+                    } else {
+                        this.stack.push(
+                            this.ram.getDataAt(addr)
+                        );
+                    }
+
+                } else {
+                    throw new Error(`STA instruction needs accompanying address parameter, use 0x00 if unsure`);
+                }
+                break;
+            }
             case 0xFF: {
                 this.running = false; 
                 break;

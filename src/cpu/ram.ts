@@ -9,8 +9,16 @@ export default class RAM {
         this.lastLoadedAddress = 0;
 
         // The byte is a wildcard
-        this.addDataAt(0, 5**2);
+        this.addWildCardDataAt(0, 5**2);
 
+    }
+
+    private addWildCardDataAt(addr: number, value: number): void {
+        this.validateByte(value);
+
+        this.data[addr] = value;
+        this.usedAddresses.add(addr);
+        this.lastLoadedAddress = addr;
     }
 
     addDataAt(addr: number, value: number): void {

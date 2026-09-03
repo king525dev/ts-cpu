@@ -74,123 +74,111 @@ export default class CPU {
                 this.stack.clr(); 
                 break;
             }
-            case 0x10: { 
+            case 0x0A: { 
                 const a = this.stack.pop(); 
                 const b = this.stack.pop(); 
 
                 this.stack.push(this.alu.exec("ADD", b, a)); 
                 break; 
             }
-            case 0x11: { 
+            case 0x0B: { 
                 const a = this.stack.pop(); 
                 const b = this.stack.pop(); 
                 this.stack.push(this.alu.exec("SUB", b, a)); 
                 break; 
             }
-            case 0x11: { 
+            case 0x0C: { 
                 const a = this.stack.pop(); 
                 const b = this.stack.pop(); 
-                this.stack.push(this.alu.exec("SUB", b, a)); 
+                this.stack.push(this.alu.exec("MUL", b, a)); 
+                break; 
+            }
+            case 0x0D: { 
+                const a = this.stack.pop(); 
+                const b = this.stack.pop(); 
+                this.stack.push(this.alu.exec("DIV", b, a)); 
+                break; 
+            }
+            case 0x0E: { 
+                const a = this.stack.pop(); 
+                const b = this.stack.pop(); 
+                this.stack.push(this.alu.exec("MOD", b, a)); 
+                break; 
+            }
+            case 0x0F: { 
+                const a = this.stack.pop(); 
+                const b = this.stack.pop(); 
+                this.stack.push(this.alu.exec("AND", b, a)); 
+                break; 
+            }
+            case 0x10: { 
+                const a = this.stack.pop(); 
+                const b = this.stack.pop(); 
+                this.stack.push(this.alu.exec("ORA", b, a)); 
                 break; 
             }
             case 0x11: { 
                 const a = this.stack.pop(); 
                 const b = this.stack.pop(); 
-                this.stack.push(this.alu.exec("SUB", b, a)); 
+                this.stack.push(this.alu.exec("EOR", b, a)); 
                 break; 
             }
-            case 0x11: { 
+            case 0x12: { 
+                const a = 0; 
+                const b = this.stack.pop(); 
+                this.stack.push(this.alu.exec("NOT", b, a)); 
+                break; 
+            }
+            case 0x13: { 
+                const a = 0; 
+                const b = this.stack.pop(); 
+                this.stack.push(this.alu.exec("INC", b, a)); 
+                break; 
+            }
+            case 0x14: { 
+                const a = 0; 
+                const b = this.stack.pop(); 
+                this.stack.push(this.alu.exec("DEC", b, a)); 
+                break; 
+            }
+            case 0x15: { 
                 const a = this.stack.pop(); 
                 const b = this.stack.pop(); 
-                this.stack.push(this.alu.exec("SUB", b, a)); 
+                this.stack.push(this.alu.exec("SHL", b, a)); 
                 break; 
             }
-            case 0x11: { 
+            case 0x16: { 
                 const a = this.stack.pop(); 
                 const b = this.stack.pop(); 
-                this.stack.push(this.alu.exec("SUB", b, a)); 
+                this.stack.push(this.alu.exec("SHR", b, a)); 
                 break; 
             }
-            case 0x11: { 
-                const a = this.stack.pop(); 
+            case 0x17: { 
+                const a = 0; 
                 const b = this.stack.pop(); 
-                this.stack.push(this.alu.exec("SUB", b, a)); 
+                this.stack.push(this.alu.exec("NEG", b, a)); 
                 break; 
             }
-            case 0x11: { 
-                const a = this.stack.pop(); 
-                const b = this.stack.pop(); 
-                this.stack.push(this.alu.exec("SUB", b, a)); 
-                break; 
-            }
-            case 0x11: { 
-                const a = this.stack.pop(); 
-                const b = this.stack.pop(); 
-                this.stack.push(this.alu.exec("SUB", b, a)); 
-                break; 
-            }
-            case 0x11: { 
-                const a = this.stack.pop(); 
-                const b = this.stack.pop(); 
-                this.stack.push(this.alu.exec("SUB", b, a)); 
-                break; 
-            }
-            case 0x11: { 
-                const a = this.stack.pop(); 
-                const b = this.stack.pop(); 
-                this.stack.push(this.alu.exec("SUB", b, a)); 
-                break; 
-            }
-            case 0x11: { 
-                const a = this.stack.pop(); 
-                const b = this.stack.pop(); 
-                this.stack.push(this.alu.exec("SUB", b, a)); 
-                break; 
-            }
-            case 0x11: { 
-                const a = this.stack.pop(); 
-                const b = this.stack.pop(); 
-                this.stack.push(this.alu.exec("SUB", b, a)); 
-                break; 
-            }
-            case 0x11: { 
-                const a = this.stack.pop(); 
-                const b = this.stack.pop(); 
-                this.stack.push(this.alu.exec("SUB", b, a)); 
-                break; 
-            }
-            case 0x11: { 
-                const a = this.stack.pop(); 
-                const b = this.stack.pop(); 
-                this.stack.push(this.alu.exec("SUB", b, a)); 
-                break; 
-            }
-            case 0x11: { 
-                const a = this.stack.pop(); 
-                const b = this.stack.pop(); 
-                this.stack.push(this.alu.exec("SUB", b, a)); 
-                break; 
-            }
-            case 0x20: {
+            case 0x1A: {
                 console.log(this.stack.peek()); 
                 break;
             }
-            case 0x21: {
+            case 0x1B: {
                 // LOG: print all stack items
                 for (let i = 0; i < this.stack.getStackPointer(); i++) {
                 process.stdout.write(`${this.stack.getStackData()[i]} `);
                 }
                 break;
             }
-            // case 0x22: {
+            // case 0x1C: {
             //     this.display.printStack(this.stack)
             //     break;
             // }
-            // case 0x23: {
+            // case 0x1D: {
             //     this.display.showTop(this.stack.peek())
             //     break;
             // }
-            case 0x24: {
+            case 0x1E: {
                 const addr = this.program[this.pc++];
                 if (addr) {
                     const value = this.stack.pop();
@@ -206,7 +194,7 @@ export default class CPU {
                 }
                 break;
             }
-            case 0x25: {
+            case 0x1F: {
                 const addr = this.program[this.pc++];
                 if (addr) {
                     if (addr == 0){

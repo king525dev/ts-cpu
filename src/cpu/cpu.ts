@@ -87,6 +87,90 @@ export default class CPU {
                 this.stack.push(this.alu.exec("SUB", b, a)); 
                 break; 
             }
+            case 0x11: { 
+                const a = this.stack.pop(); 
+                const b = this.stack.pop(); 
+                this.stack.push(this.alu.exec("SUB", b, a)); 
+                break; 
+            }
+            case 0x11: { 
+                const a = this.stack.pop(); 
+                const b = this.stack.pop(); 
+                this.stack.push(this.alu.exec("SUB", b, a)); 
+                break; 
+            }
+            case 0x11: { 
+                const a = this.stack.pop(); 
+                const b = this.stack.pop(); 
+                this.stack.push(this.alu.exec("SUB", b, a)); 
+                break; 
+            }
+            case 0x11: { 
+                const a = this.stack.pop(); 
+                const b = this.stack.pop(); 
+                this.stack.push(this.alu.exec("SUB", b, a)); 
+                break; 
+            }
+            case 0x11: { 
+                const a = this.stack.pop(); 
+                const b = this.stack.pop(); 
+                this.stack.push(this.alu.exec("SUB", b, a)); 
+                break; 
+            }
+            case 0x11: { 
+                const a = this.stack.pop(); 
+                const b = this.stack.pop(); 
+                this.stack.push(this.alu.exec("SUB", b, a)); 
+                break; 
+            }
+            case 0x11: { 
+                const a = this.stack.pop(); 
+                const b = this.stack.pop(); 
+                this.stack.push(this.alu.exec("SUB", b, a)); 
+                break; 
+            }
+            case 0x11: { 
+                const a = this.stack.pop(); 
+                const b = this.stack.pop(); 
+                this.stack.push(this.alu.exec("SUB", b, a)); 
+                break; 
+            }
+            case 0x11: { 
+                const a = this.stack.pop(); 
+                const b = this.stack.pop(); 
+                this.stack.push(this.alu.exec("SUB", b, a)); 
+                break; 
+            }
+            case 0x11: { 
+                const a = this.stack.pop(); 
+                const b = this.stack.pop(); 
+                this.stack.push(this.alu.exec("SUB", b, a)); 
+                break; 
+            }
+            case 0x11: { 
+                const a = this.stack.pop(); 
+                const b = this.stack.pop(); 
+                this.stack.push(this.alu.exec("SUB", b, a)); 
+                break; 
+            }
+            case 0x11: { 
+                const a = this.stack.pop(); 
+                const b = this.stack.pop(); 
+                this.stack.push(this.alu.exec("SUB", b, a)); 
+                break; 
+            }
+            case 0x11: { 
+                const a = this.stack.pop(); 
+                const b = this.stack.pop(); 
+                this.stack.push(this.alu.exec("SUB", b, a)); 
+                break; 
+            }
+            case 0x11: { 
+                const a = this.stack.pop(); 
+                const b = this.stack.pop(); 
+                this.stack.push(this.alu.exec("SUB", b, a)); 
+                break; 
+            }
             case 0x20: {
                 console.log(this.stack.peek()); 
                 break;

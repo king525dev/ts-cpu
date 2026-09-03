@@ -158,7 +158,7 @@ export default class CPU {
     run() {
         this.running = true;
         while (this.running) {
-        this.step();
+            this.step();
         }
     }
 }

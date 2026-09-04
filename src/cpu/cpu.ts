@@ -159,26 +159,26 @@ export default class CPU {
                 this.stack.push(this.alu.exec("NEG", b, a)); 
                 break; 
             }
-            case 0x1A: {
+            case 0x18: {
                 console.log(this.stack.peek()); 
                 break;
             }
-            case 0x1B: {
+            case 0x19: {
                 // LOG: print all stack items
                 for (let i = 0; i < this.stack.getStackPointer(); i++) {
                 process.stdout.write(`${this.stack.getStackData()[i]} `);
                 }
                 break;
             }
-            // case 0x1C: {
+            // case 0x1A: {
             //     this.display.printStack(this.stack)
             //     break;
             // }
-            // case 0x1D: {
+            // case 0x1B: {
             //     this.display.showTop(this.stack.peek())
             //     break;
             // }
-            case 0x1E: {
+            case 0x1C: {
                 const addr = this.program[this.pc++];
                 if (addr) {
                     const value = this.stack.pop();
@@ -194,7 +194,7 @@ export default class CPU {
                 }
                 break;
             }
-            case 0x1F: {
+            case 0x1D: {
                 const addr = this.program[this.pc++];
                 if (addr) {
                     if (addr == 0){

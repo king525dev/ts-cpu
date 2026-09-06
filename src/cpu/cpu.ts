@@ -212,6 +212,20 @@ export default class CPU {
                 }
                 break;
             }
+            case 0x1E: {
+                const addr = this.program[this.pc++];
+                if (addr) {
+                    if (addr < this.program.length){
+                        this.pc = addr;
+                    } else {
+                        throw new Error(`Invalid Address`);
+                    }
+
+                } else {
+                    throw new Error(`STA instruction needs accompanying address parameter, use 0x00 if unsure`);
+                }
+                break;
+            }
             case 0xFF: {
                 this.running = false; 
                 break;

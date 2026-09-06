@@ -1,0 +1,10 @@
+// Testing if this Compiles with Comments and Labels //
+LDA 10
+DUP
+>loop
+OUT
+LDA 10
+ADD // Add 10 again then duplicate //
+DUP
+JMP loop
+BRK

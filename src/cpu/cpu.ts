@@ -225,6 +225,31 @@ export default class CPU {
                 }
                 break;
             }
+            case 0x1F: {
+                const addr = this.program[this.pc++];
+                const condition = this.stack.pop();
+                if (addr) {
+                    if (addr < this.program.length){
+                        if (condition > 0){
+                            this.pc = addr;
+                        }
+                    } else {
+                        throw new Error(`Invalid Instruction Address`);
+                    }
+                } else {
+                    throw new Error(`JCN instruction needs accompanying address parameter`);
+                }
+                break;
+            }
+            case 0x20: {
+                const value = this.program[this.pc++];
+                if (value) {
+                    this.stack.push(value);
+                } else {
+                    throw new Error(`ECD instruction needs accompanying parameter`);
+                }
+                break;
+            }
             case 0xFF: {
                 this.running = false; 
                 break;

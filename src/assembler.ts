@@ -29,7 +29,7 @@ export default class Assembler {
         AND: 0x0F, ORA: 0x10, EOR: 0x11, NOT: 0x12,
         INC: 0x13, DEC: 0x14, SHL: 0x15, SHR: 0x16, NEG: 0x17,
         OUT: 0x18, LOG: 0x19, PRT: 0x1A, SHW: 0x1B, STA: 0x1C, LDR: 0x1D,
-        JMP: 0x1E,
+        JMP: 0x1E, JCN: 0x1F, ECD: 0x20,
         BRK: 0xFF,
     };
 
@@ -38,6 +38,7 @@ export default class Assembler {
         "STA",
         "LDR",
         "JMP",
+        "ECD"
     ]
 
     assemble(source: string): number[] {
@@ -104,8 +105,11 @@ export default class Assembler {
                 bytecode.push(opcode);
                 if (this.opcodesWithParameters.includes(mnemonic)) {
                     const indexOfValue = tokens.indexOf(token) + 1;
-                    if (tokens[indexOfValue] && isValidNumber(tokens[indexOfValue])){
+                    if (tokens[indexOfValue] && isValidNumber(tokens[indexOfValue]) && mnemonic !== "ECD"){
                         const value = parseNumber(tokens[ indexOfValue ]);
+                        bytecode.push(value & 0xFF);
+                    } else if (tokens[ indexOfValue ] && mnemonic == "ECD") {
+                        const value = tokens[ indexOfValue ].charCodeAt(0);
                         bytecode.push(value & 0xFF);
                     }
                 } 

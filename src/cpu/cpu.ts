@@ -218,11 +218,10 @@ export default class CPU {
                     if (addr < this.program.length){
                         this.pc = addr;
                     } else {
-                        throw new Error(`Invalid Address`);
+                        throw new Error(`Invalid Instruction Address`);
                     }
-
                 } else {
-                    throw new Error(`STA instruction needs accompanying address parameter, use 0x00 if unsure`);
+                    throw new Error(`JMP instruction needs accompanying address parameter`);
                 }
                 break;
             }

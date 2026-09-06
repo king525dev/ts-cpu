@@ -166,7 +166,7 @@ export default class CPU {
             case 0x19: {
                 // LOG: print all stack items
                 for (let i = 0; i < this.stack.getStackPointer(); i++) {
-                process.stdout.write(`${this.stack.getStackData()[i]} `);
+                process.stdout.write(` [ ${this.stack.getStackData()[i]} ]`);
                 }
                 break;
             }

@@ -1,15 +1,15 @@
 import Assembler  from "./assembler.js";
 import CPU from "./cpu/cpu.js";
 
-const source = `
+const source = `// Testing if this Compiles with Comments and Labels //
 LDA 10
-STA 5
-LDA 15
-STA 6
-LDR 5
-LDR 6
-ADD
+DUP
+>loop
 OUT
+LDA 10
+ADD // Add 10 again then duplicate //
+DUP
+JMP loop
 BRK
 `;
 

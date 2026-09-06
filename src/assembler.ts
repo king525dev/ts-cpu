@@ -29,6 +29,7 @@ export default class Assembler {
         AND: 0x0F, ORA: 0x10, EOR: 0x11, NOT: 0x12,
         INC: 0x13, DEC: 0x14, SHL: 0x15, SHR: 0x16, NEG: 0x17,
         OUT: 0x18, LOG: 0x19, PRT: 0x1A, SHW: 0x1B, STA: 0x1C, LDR: 0x1D,
+        JMP: 0x1E,
         BRK: 0xFF,
     };
 
@@ -42,75 +43,72 @@ export default class Assembler {
     assemble(source: string): number[] {
         const bytecode: number[] = [];
         const symbolTable: { [label: string]: number }  = {}
-        const lines = source.split("\n");
+        let tokens = source.split(/\s+/).filter(
+            token => token !== '' || typeof token !== undefined
+        )
 
-        for (let line of lines) {
 
-            //Remove Comments
-            if (line.includes('//')){
-                let count = 0;
-                let position = 0;
+        // First Pass: Remove Comments and Create Symbol Table
+        //Remove Comments
+        if (tokens.includes('//')){
+            let count = 0;
+            let position = 0;
 
-                while ((position = line.indexOf("//", position)) !== -1) {
-                    count++;
-                    position += 2;
-                }
-
-                const commentCount = Math.floor(count / 2);
-
-                for (let i = 0; i < commentCount; i++) {
-                    const start = line.indexOf("//");
-                    if (start === -1) break;
-
-                    const end = line.indexOf("//", start + 2);
-                    if (end === -1) break;
-
-                    line = line.slice(0, start) + line.slice(end + 2);
-                }
+            while ((position = tokens.indexOf("//", position)) !== -1) {
+                count++;
+                position += 1;
             }
 
-            line = line.trim();
-            if (line === "" || typeof line === undefined) continue;
+            const commentCount = Math.floor(count / 2);
 
-            const tokens = line.split(/\s+/);
+            for (let i = 0; i < commentCount; i++) {
+                const start = tokens.indexOf("//");
+                if (start === -1) break;
 
-            // First Pass (Symbol table Generation)
-            for(let i = 0; i < tokens.length; i++){
-                    if(tokens[i]?.startsWith(">")){
-                        const labelName = line.slice(1, tokens[i]?.length);
-                        symbolTable[labelName] = i++;
+                const end = tokens.indexOf("//", start + 2);
+                if (end === -1) break;
+
+                tokens = tokens.slice(0, start).concat(tokens.slice(end + 1));
+            }
+        }
+
+        // Generate Symbol Table
+        for(let i = 0; i < tokens.length; i++){
+            let token = tokens[i]
+            if(token){
+                if(token.startsWith(">")){
+                    const labelName = token.slice(1, token.length);
+                    symbolTable[labelName] = i++;
+                }
+            }
+        }
+
+        // Second Pass: Replace labels with addresses
+        for (let i = 0; i < tokens.length; i++) {
+            const token = tokens[i];
+
+            if (token) {
+                const address = symbolTable[token];
+                if (address) {
+                    tokens[i] = address.toString();
+                } 
+            }
+        }
+
+        // Third Pass: Assembly
+        for (const token of tokens){
+            if (token in this.opcodes){
+                const mnemonic = token.toUpperCase();
+                const opcode = this.opcodes[mnemonic];
+                if (opcode === undefined) throw new Error(`Unknown instruction: ${mnemonic}`);
+                bytecode.push(opcode);
+                if (this.opcodesWithParameters.includes(mnemonic)) {
+                    const indexOfValue = tokens.indexOf(token) + 1;
+                    if (tokens[indexOfValue] && isValidNumber(tokens[indexOfValue])){
+                        const value = parseNumber(tokens[ indexOfValue ]);
+                        bytecode.push(value & 0xFF);
                     }
-            }
-
-            // Second Pass (Replace labels with addresses)
-            for (let i = 0; i < tokens.length; i++) {
-                const token = tokens[i];
-
-                if (token) {
-                    const address = symbolTable[token];
-                    if (address) {
-                        tokens[i] = address.toString();
-                    } 
-                }
-            }
-
-
-
-            // Third Pass (Assembly)
-            for (const token of tokens){
-                if (token in this.opcodes){
-                    const mnemonic = token.toUpperCase();
-                    const opcode = this.opcodes[mnemonic];
-                    if (opcode === undefined) throw new Error(`Unknown instruction: ${mnemonic}`);
-                    bytecode.push(opcode);
-                    if (this.opcodesWithParameters.includes(mnemonic)) {
-                        const indexOfValue = tokens.indexOf(token) + 1;
-                        if (tokens[indexOfValue] && isValidNumber(tokens[indexOfValue])){
-                            const value = parseNumber(tokens[ indexOfValue ]);
-                            bytecode.push(value & 0xFF);
-                        }
-                    } 
-                }
+                } 
             }
         }
 

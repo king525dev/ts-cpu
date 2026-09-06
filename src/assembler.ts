@@ -36,6 +36,7 @@ export default class Assembler {
         "LDA", 
         "STA",
         "LDR",
+        "JMP",
     ]
 
     assemble(source: string): number[] {

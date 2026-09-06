@@ -82,20 +82,18 @@ export default class Assembler {
                     }
             }
 
-            // Second Pass
+            // Second Pass (Replace labels with addresses)
             for (let i = 0; i < tokens.length; i++) {
                 const token = tokens[i];
 
-                if (token !== undefined) {
-                    const trimmedToken = token.trim();
-
-                    if (Object.prototype.hasOwnProperty.call(symbolTable, trimmedToken)) {
-                        tokens[i] = symbolTable[trimmedToken].toString();
-                    } else {
-                        tokens[i] = trimmedToken;
-                    }
+                if (token) {
+                    const address = symbolTable[token];
+                    if (address) {
+                        tokens[i] = address.toString();
+                    } 
                 }
             }
+
 
 
             // Third Pass (Assembly)

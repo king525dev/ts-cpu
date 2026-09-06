@@ -41,12 +41,32 @@ export default class Assembler {
 
     assemble(source: string): number[] {
         const bytecode: number[] = [];
+        const symbolTable: { [label: string]: number }  = {}
         const lines = source.split("\n");
+
         for (let line of lines) {
 
-            if (line.includes(';')){
-                const end = line.indexOf(';');
-                line = line.slice(0, end); // remove comments
+            //Remove Comments
+            if (line.includes('//')){
+                let count = 0;
+                let position = 0;
+
+                while ((position = line.indexOf("//", position)) !== -1) {
+                    count++;
+                    position += 2;
+                }
+
+                const commentCount = Math.floor(count / 2);
+
+                for (let i = 0; i < commentCount; i++) {
+                    const start = line.indexOf("//");
+                    if (start === -1) break;
+
+                    const end = line.indexOf("//", start + 2);
+                    if (end === -1) break;
+
+                    line = line.slice(0, start) + line.slice(end + 2);
+                }
             }
 
             line = line.trim();
@@ -54,6 +74,31 @@ export default class Assembler {
 
             const tokens = line.split(/\s+/);
 
+            // First Pass (Symbol table Generation)
+            for(let i = 0; i < tokens.length; i++){
+                    if(tokens[i]?.startsWith(">")){
+                        const labelName = line.slice(1, tokens[i]?.length);
+                        symbolTable[labelName] = i++;
+                    }
+            }
+
+            // Second Pass
+            for (let i = 0; i < tokens.length; i++) {
+                const token = tokens[i];
+
+                if (token !== undefined) {
+                    const trimmedToken = token.trim();
+
+                    if (Object.prototype.hasOwnProperty.call(symbolTable, trimmedToken)) {
+                        tokens[i] = symbolTable[trimmedToken].toString();
+                    } else {
+                        tokens[i] = trimmedToken;
+                    }
+                }
+            }
+
+
+            // Third Pass (Assembly)
             for (const token of tokens){
                 if (token in this.opcodes){
                     const mnemonic = token.toUpperCase();

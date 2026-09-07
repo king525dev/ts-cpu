@@ -34,7 +34,7 @@ export default class CPU {
         switch (opcode) {
             case 0x01: {
                 const value = this.program[this.pc++];
-                if (value) {
+                if (value !== undefined) {
                     this.stack.push(value);
                 } else {
                     throw new Error(`LDA instruction needs accompanying parameter`);
@@ -160,14 +160,16 @@ export default class CPU {
                 break; 
             }
             case 0x18: {
-                console.log(this.stack.peek()); 
+                console.log(this.stack.pop()); 
                 break;
             }
             case 0x19: {
                 // LOG: print all stack items
+                process.stdout.write(`[`)
                 for (let i = 0; i < this.stack.getStackPointer(); i++) {
-                process.stdout.write(` [ ${this.stack.getStackData()[i]} ]`);
+                process.stdout.write(` ${this.stack.getStackData()[i]} `);
                 }
+                process.stdout.write(`]`)
                 break;
             }
             // case 0x1A: {
@@ -180,7 +182,7 @@ export default class CPU {
             // }
             case 0x1C: {
                 const addr = this.program[this.pc++];
-                if (addr) {
+                if (addr !== undefined) {
                     const value = this.stack.pop();
 
                     if (addr == 0){
@@ -196,7 +198,7 @@ export default class CPU {
             }
             case 0x1D: {
                 const addr = this.program[this.pc++];
-                if (addr) {
+                if (addr !== undefined) {
                     if (addr == 0){
                         this.stack.push(
                             this.ram.getLastLoadedValue()
@@ -214,7 +216,7 @@ export default class CPU {
             }
             case 0x1E: {
                 const addr = this.program[this.pc++];
-                if (addr) {
+                if (addr !== undefined) {
                     if (addr < this.program.length){
                         this.pc = addr;
                     } else {
@@ -228,7 +230,7 @@ export default class CPU {
             case 0x1F: {
                 const addr = this.program[this.pc++];
                 const condition = this.stack.pop();
-                if (addr) {
+                if (addr !== undefined) {
                     if (addr < this.program.length){
                         if (condition > 0){
                             this.pc = addr;
@@ -243,7 +245,7 @@ export default class CPU {
             }
             case 0x20: {
                 const value = this.program[this.pc++];
-                if (value) {
+                if (value !== undefined) {
                     this.stack.push(value);
                 } else {
                     throw new Error(`ECD instruction needs accompanying parameter`);
@@ -273,7 +275,7 @@ export default class CPU {
                 break;
             }
             default: {
-                if (opcode){
+                if (opcode !== undefined){
                     throw new Error(`Unknown opcode: 0x${opcode.toString(16)}`);
                 } else {
                     throw new Error(`Unknown opcode: Opcode is undefined.`);

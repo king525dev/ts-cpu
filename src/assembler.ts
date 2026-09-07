@@ -39,16 +39,16 @@ export default class Assembler {
         "STA",
         "LDR",
         "JMP",
-        "ECD"
+        "ECD",
+        "JCN"
     ]
 
     assemble(source: string): number[] {
         const bytecode: number[] = [];
-        const symbolTable: { [label: string]: number }  = {}
-        let tokens = source.split(/\s+/).filter(
-            token => token !== '' || typeof token !== undefined
-        )
-
+        const symbolTable: { [label: string]: number }  = {};
+        let tokens = source.trim().split(/\s+/).filter(
+            token => token !== '' || typeof(token) !== undefined || typeof(token) !== null
+        );
 
         // First Pass: Remove Comments and Create Symbol Table
         //Remove Comments
@@ -77,7 +77,7 @@ export default class Assembler {
         // Generate Symbol Table
         for(let i = 0; i < tokens.length; i++){
             let token = tokens[i]
-            if(token){
+            if(token !== undefined){
                 if(token.startsWith(">")){
                     const labelName = token.slice(1, token.length);
                     symbolTable[labelName] = i++;
@@ -89,31 +89,34 @@ export default class Assembler {
         for (let i = 0; i < tokens.length; i++) {
             const token = tokens[i];
 
-            if (token) {
+            if (token !== undefined) {
                 const address = symbolTable[token];
-                if (address) {
+                if (address !== undefined) {
                     tokens[i] = address.toString();
                 } 
             }
         }
 
         // Third Pass: Assembly
-        for (const token of tokens){
-            if (token in this.opcodes){
-                const mnemonic = token.toUpperCase();
-                const opcode = this.opcodes[mnemonic];
-                if (opcode === undefined) throw new Error(`Unknown instruction: ${mnemonic}`);
-                bytecode.push(opcode);
-                if (this.opcodesWithParameters.includes(mnemonic)) {
-                    const indexOfValue = tokens.indexOf(token) + 1;
-                    if (tokens[indexOfValue] && isValidNumber(tokens[indexOfValue]) && mnemonic !== "ECD"){
-                        const value = parseNumber(tokens[ indexOfValue ]);
-                        bytecode.push(value & 0xFF);
-                    } else if (tokens[ indexOfValue ] && mnemonic == "ECD") {
-                        const value = tokens[ indexOfValue ].charCodeAt(0);
-                        bytecode.push(value & 0xFF);
-                    }
-                } 
+        for(let i = 0; i < tokens.length; i++){
+            let token = tokens[i]
+            if(token !== undefined){
+                if (token in this.opcodes){
+                    const mnemonic = token.toUpperCase();
+                    const opcode = this.opcodes[mnemonic];
+                    if (opcode === undefined) throw new Error(`Unknown instruction: ${mnemonic}`);
+                    bytecode.push(opcode);
+                    if (this.opcodesWithParameters.includes(mnemonic)) {
+                        const indexOfValue = tokens.indexOf(token, i) + 1;
+                        if (tokens[indexOfValue] && isValidNumber(tokens[indexOfValue]) && mnemonic !== "ECD"){
+                            const value = parseNumber(tokens[ indexOfValue ]);
+                            bytecode.push(value & 0xFF);
+                        } else if (tokens[ indexOfValue ] && mnemonic == "ECD") {
+                            const value = tokens[ indexOfValue ].charCodeAt(0);
+                            bytecode.push(value & 0xFF);
+                        }
+                    } 
+                }
             }
         }
 

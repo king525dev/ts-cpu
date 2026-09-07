@@ -49,7 +49,7 @@ export default class RAM {
 
         const data = this.data[addr];
 
-        if (data){
+        if (data !== undefined){
             return data;
         } else {
             throw new Error(`Error retrieving data at ${addr}`)
@@ -90,7 +90,7 @@ export default class RAM {
 
     getLastLoadedValue(): number {
         const value = this.data[this.lastLoadedAddress];
-        if(value){
+        if(value !== undefined){
             return value;
         }
         return 0;   

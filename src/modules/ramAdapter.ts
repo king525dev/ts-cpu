@@ -10,4 +10,8 @@ export default class ramOperations {
     addDataAtFreeAddress(value: number): number {
         return this.ram.addDataAtFreeAddress(value);
     }
+
+    findFreeAddress(): number {
+        return this.ram.findFreeAddress();
+    }
 }

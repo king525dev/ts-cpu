@@ -24,6 +24,13 @@ function isValidNumber(char: string, type?: "hex" | "dec" | "bin" | "all"): bool
 }
 
 export default class Assembler {
+
+    ram: ramOperations;
+
+    constructor(){
+        this.ram = new ramOperations;
+    }
+
     private opcodes: { [mnemonic: string]: number } = {
         LDA: 0x01, DCD: 0x02, POP: 0x03, NIP: 0x04, SWP: 0x05, DUP: 0x06,
         OVR: 0x07, ROT: 0x08, CLR: 0x09,
@@ -32,7 +39,7 @@ export default class Assembler {
         INC: 0x13, DEC: 0x14, SHL: 0x15, SHR: 0x16, NEG: 0x17,
         OUT: 0x18, LOG: 0x19, PRT: 0x1A, SHW: 0x1B, STA: 0x1C, LDR: 0x1D,
         JMP: 0x1E, JCN: 0x1F, 
-        ECD: 0x20, EQU: 0x21, GTH: 0X22, LTH: 0X23,
+        ECD: 0x20, EQU: 0x21, GTH: 0x22, LTH: 0x23, VAR: 0x24,
         BRK: 0xFF,
     };
 
@@ -77,9 +84,16 @@ export default class Assembler {
         }
 
         // Generate Symbol Table
+
         for(let i = 0; i < tokens.length; i++){
-            let token = tokens[i]
-            if(token !== undefined){
+            let token = tokens[i];
+            if(token !== undefined){  
+                if(token == "VAR"){
+                    const value = tokens[tokens.indexOf(token, i) + 1];
+                    const allocatedAddress = this.ram.findFreeAddress();
+                    if (value !== undefined) symbolTable[value] = allocatedAddress
+                }
+
                 if(token.startsWith(">")){
                     const labelName = token.slice(1, token.length);
                     symbolTable[labelName] = i++;

@@ -270,6 +270,10 @@ export default class CPU {
                 this.stack.push(this.alu.exec("LTH", b, a)); 
                 break; 
             }
+            case 0x24: { 
+                const value = this.program[this.pc++];
+                break; 
+            }
             case 0xFF: {
                 this.running = false; 
                 break;

@@ -1,3 +1,5 @@
+import ramOperations from "./modules/ramAdapter.js";
+
 function parseNumber(token: string): number {
     if (/^(?:0[xX][0-9a-fA-F]+)$/.test(token)) {
         return parseInt(token, 16); // Parse Hex

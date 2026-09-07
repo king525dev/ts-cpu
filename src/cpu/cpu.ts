@@ -250,6 +250,24 @@ export default class CPU {
                 }
                 break;
             }
+            case 0x21: { 
+                const a = this.stack.pop(); 
+                const b = this.stack.pop(); 
+                this.stack.push(this.alu.exec("EQU", b, a)); 
+                break; 
+            }
+            case 0x22: { 
+                const a = this.stack.pop(); 
+                const b = this.stack.pop(); 
+                this.stack.push(this.alu.exec("GTH", b, a)); 
+                break; 
+            }
+            case 0x23: { 
+                const a = this.stack.pop(); 
+                const b = this.stack.pop(); 
+                this.stack.push(this.alu.exec("LTH", b, a)); 
+                break; 
+            }
             case 0xFF: {
                 this.running = false; 
                 break;

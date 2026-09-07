@@ -1,15 +1,22 @@
 import Assembler  from "./assembler.js";
 import CPU from "./cpu/cpu.js";
 
-const source = `// Testing if this Compiles with Comments and Labels //
-LDA 10
-DUP
+const source = `// This program tests conditional jumps, variables and loops //
+
+LDA 5
+STA 0x05
+
 >loop
-OUT
-LDA 10
-ADD // Add 10 again then duplicate //
+LDA 0x05
 DUP
-JMP loop
+OUT
+DEC
+DUP
+STA 0x05
+LDA 0
+GTH
+JCN loop
+
 BRK
 `;
 

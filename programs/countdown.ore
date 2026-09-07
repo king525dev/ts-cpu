@@ -1,0 +1,17 @@
+// This program tests conditional jumps, variables and loops //
+
+LDA 5
+STA 0x05
+
+>loop
+LDA 0x05
+DUP
+OUT
+DEC
+DUP
+STA 0x05
+LDA 0
+GTH
+JCN loop
+
+BRK

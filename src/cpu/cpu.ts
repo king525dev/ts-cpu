@@ -8,7 +8,7 @@ export default class CPU {
     alu: ALU;
     // display: Display;
     program: Uint8Array;
-    ram: RAM;
+    ram: typeof RAM;
     pc: number;
     running: boolean;
 
@@ -17,7 +17,7 @@ export default class CPU {
         this.alu = new ALU();
         this.program = new Uint8Array(0);
         // this.display = new Display(new HTMLCanvasElement)
-        this.ram = new RAM();
+        this.ram = RAM;
         this.pc = 0;
         this.running = false;
     }

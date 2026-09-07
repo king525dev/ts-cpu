@@ -21,9 +21,8 @@ JCN loop
 BRK
 `;
 
-
+const cpu = new CPU();
 const assembler = new Assembler();
 const bytecode = assembler.assemble(source);
-const cpu = new CPU();
 cpu.load(bytecode);
 cpu.run();

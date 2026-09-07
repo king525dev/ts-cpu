@@ -4,7 +4,7 @@ LDA 5
 STA 0x05
 
 >loop
-LDA 0x05
+LDR 0x05
 DUP
 OUT
 DEC

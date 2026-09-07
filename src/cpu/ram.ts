@@ -1,4 +1,4 @@
-export default class RAM {
+class RAM {
     private data: Uint8Array;
     private usedAddresses: Set<number>;
     private lastLoadedAddress: number;
@@ -151,3 +151,5 @@ export default class RAM {
         }
     }
 }
+
+export default new RAM;

@@ -2,22 +2,21 @@ import Assembler  from "./assembler.js";
 import CPU from "./cpu/cpu.js";
 
 const source = `
-// This program tests conditional jumps, variables and loops //
+VAR age
+VAR multiplier
 
-LDA 10
-STA 0x05
+LDA 20
+STA age
+LDA 2
+STA multiplier
 
->loop
-LDR 0x05
-DUP
+LDR age
+LDR multiplier
+LOG
+
+MUL
+
 OUT
-DEC
-DUP
-STA 0x05
-LDA 0x00
-GTH
-JCN loop
-
 BRK
 `;
 

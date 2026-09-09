@@ -97,6 +97,13 @@ export default class Assembler {
                     this.allocatedAddresses.add(allocatedAddress);
                 }
 
+                if(token.startsWith("@")){
+                    const value = token.slice(1, token.length);
+                    const allocatedAddress = this.ram.findFreeAddress(this.allocatedAddresses);
+                    if (value !== undefined) symbolTable[value] = allocatedAddress
+                    this.allocatedAddresses.add(allocatedAddress);
+                }
+
                 if(token.startsWith(">")){
                     const labelName = token.slice(1, token.length);
                     symbolTable[labelName] = i++;

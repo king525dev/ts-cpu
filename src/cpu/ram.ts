@@ -113,8 +113,11 @@ class RAM {
         return this.data.length - this.usedAddresses.size;
     }
 
-    findFreeAddress(): number {
+    findFreeAddress(allocatedAddresses?: Set<number>): number {
         for (let addr = 0; addr < this.data.length; addr++) {
+            if(allocatedAddresses && allocatedAddresses.has(addr)){
+                continue;
+            }
             if (!this.usedAddresses.has(addr)) {
                 return addr;
             }

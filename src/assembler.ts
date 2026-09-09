@@ -25,10 +25,12 @@ function isValidNumber(char: string, type?: "hex" | "dec" | "bin" | "all"): bool
 
 export default class Assembler {
 
-    ram: ramOperations;
+    private ram: ramOperations;
+    private allocatedAddresses: Set<number>;
 
     constructor(){
         this.ram = new ramOperations;
+        this.allocatedAddresses = new Set<number>();
     }
 
     private opcodes: { [mnemonic: string]: number } = {
@@ -90,9 +92,14 @@ export default class Assembler {
             if(token !== undefined){  
                 if(token == "VAR"){
                     const value = tokens[tokens.indexOf(token, i) + 1];
+<<<<<<< Updated upstream
                     const allocatedAddress = this.ram.findFreeAddress();
                     console.log(allocatedAddress)
+=======
+                    const allocatedAddress = this.ram.findFreeAddress(this.allocatedAddresses);
+>>>>>>> Stashed changes
                     if (value !== undefined) symbolTable[value] = allocatedAddress
+                    this.allocatedAddresses.add(allocatedAddress);
                 }
 
                 if(token.startsWith(">")){

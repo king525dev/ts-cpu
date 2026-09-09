@@ -11,7 +11,7 @@ export default class ramOperations {
         return this.ram.addDataAtFreeAddress(value);
     }
 
-    findFreeAddress(): number {
-        return this.ram.findFreeAddress();
+    findFreeAddress(allocatedAddresses?: Set<number>): number {
+        return this.ram.findFreeAddress(allocatedAddresses);
     }
 }

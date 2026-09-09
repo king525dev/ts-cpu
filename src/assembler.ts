@@ -92,12 +92,7 @@ export default class Assembler {
             if(token !== undefined){  
                 if(token == "VAR"){
                     const value = tokens[tokens.indexOf(token, i) + 1];
-<<<<<<< Updated upstream
-                    const allocatedAddress = this.ram.findFreeAddress();
-                    console.log(allocatedAddress)
-=======
                     const allocatedAddress = this.ram.findFreeAddress(this.allocatedAddresses);
->>>>>>> Stashed changes
                     if (value !== undefined) symbolTable[value] = allocatedAddress
                     this.allocatedAddresses.add(allocatedAddress);
                 }

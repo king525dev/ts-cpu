@@ -104,6 +104,16 @@ export default class Assembler {
                     this.allocatedAddresses.add(allocatedAddress);
                 }
 
+                if(token.startsWith("#")){
+                    const value = token.slice(1, token.length);
+                    const prevArr = tokens.slice(0, i);
+                    prevArr.concat(
+                        ["LDA", value]
+                    );
+
+                    tokens = prevArr.concat(token.slice(++i, tokens.length));
+                }
+
                 if(token.startsWith(">")){
                     const labelName = token.slice(1, token.length);
                     symbolTable[labelName] = i++;

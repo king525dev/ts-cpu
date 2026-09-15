@@ -23,6 +23,51 @@ function isValidNumber(char: string, type?: "hex" | "dec" | "bin" | "all"): bool
     }
 }
 
+private expandMultiInstruction(tokens: string[]): string[] {
+    const result: string[] = [];
+
+    for (let i = 0; i < tokens.length; i++) {
+        const token = tokens[i];
+
+        if (token !== '"') {
+            result.push(token);
+            continue;
+        }
+
+        // The instruction should be immediately before "
+        const instruction = result[result.length - 1];
+
+        if (!instruction || !this.opcodesWithParameters.includes(instruction)) {
+            throw new Error(`Invalid multi-instruction at token ${i}`);
+        }
+
+        // Remove the instruction because we'll add it before every value.
+        result.pop();
+
+        let foundClosingQuote = false;
+
+        i++;
+
+        while (i < tokens.length) {
+            const value = tokens[i];
+
+            if (value === '"') {
+                foundClosingQuote = true;
+                break;
+            }
+
+            result.push(instruction, value);
+            i++;
+        }
+
+        if (!foundClosingQuote) {
+            throw new Error(`Unterminated multi-instruction starting at token ${i}`);
+        }
+    }
+
+    return result;
+}
+
 export default class Assembler {
 
     private ram: ramOperations;
@@ -87,6 +132,44 @@ export default class Assembler {
 
         // Generate Symbol Table
 
+        if (tokens.includes('"')){
+            let count = 0;
+            let position = 0;
+
+            while ((position = tokens.indexOf('"', position)) !== -1) {
+                count++;
+                position += 1;
+            }
+
+            const multiFuncCount = Math.floor(count / 2);
+
+            for (let i = 0; i < multiFuncCount; i++) {
+                const start = tokens.indexOf('"');
+                const prevInstructionIndex = start - 1;
+                if (start === -1) break;
+
+                const end = tokens.indexOf('"', start + 1);
+                if (end === -1) break;
+
+                const multiFuncList = tokens.slice(start + 1, end)
+                const initialLength = multiFuncList.length
+
+                for (let i = 0; i < initialLength; i++) {
+                    const prevArr = multiFuncList.slice(0, i); 
+                    const value = multiFuncList[i];
+                    if (value !== undefined) {
+                        prevArr.concat(
+                            [tokens[prevInstructionIndex], multiFuncList[i]]
+                        );
+                    }
+
+                    tokens = prevArr.concat(token.slice(++i, tokens.length));
+                }
+
+                tokens = tokens.slice(0, start).concat(tokens.slice(end + 1));
+            }
+        }
+
         for(let i = 0; i < tokens.length; i++){
             let token = tokens[i];
             if(token !== undefined){  
@@ -109,6 +192,16 @@ export default class Assembler {
                     const prevArr = tokens.slice(0, i);
                     prevArr.concat(
                         ["LDA", value]
+                    );
+
+                    tokens = prevArr.concat(token.slice(++i, tokens.length));
+                }
+
+                if(token.endsWith("++")){
+                    const value = token.slice(1, token.length);
+                    const prevArr = tokens.slice(0, i);
+                    prevArr.concat(
+                        ["INC", value]
                     );
 
                     tokens = prevArr.concat(token.slice(++i, tokens.length));

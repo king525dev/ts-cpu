@@ -135,44 +135,6 @@ export default class Assembler {
 
         // Generate Symbol Table
 
-        if (tokens.includes('"')){
-            let count = 0;
-            let position = 0;
-
-            while ((position = tokens.indexOf('"', position)) !== -1) {
-                count++;
-                position += 1;
-            }
-
-            const multiFuncCount = Math.floor(count / 2);
-
-            for (let i = 0; i < multiFuncCount; i++) {
-                const start = tokens.indexOf('"');
-                const prevInstructionIndex = start - 1;
-                if (start === -1) break;
-
-                const end = tokens.indexOf('"', start + 1);
-                if (end === -1) break;
-
-                const multiFuncList = tokens.slice(start + 1, end)
-                const initialLength = multiFuncList.length
-
-                for (let i = 0; i < initialLength; i++) {
-                    const prevArr = multiFuncList.slice(0, i); 
-                    const value = multiFuncList[i];
-                    if (value !== undefined) {
-                        prevArr.concat(
-                            [tokens[prevInstructionIndex], multiFuncList[i]]
-                        );
-                    }
-
-                    tokens = prevArr.concat(token.slice(++i, tokens.length));
-                }
-
-                tokens = tokens.slice(0, start).concat(tokens.slice(end + 1));
-            }
-        }
-
         for(let i = 0; i < tokens.length; i++){
             let token = tokens[i];
             if(token !== undefined){  

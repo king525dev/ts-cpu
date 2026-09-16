@@ -23,51 +23,6 @@ function isValidNumber(char: string, type?: "hex" | "dec" | "bin" | "all"): bool
     }
 }
 
-private expandMultiInstruction(tokens: string[]): string[] {
-    const result: string[] = [];
-
-    for (let i = 0; i < tokens.length; i++) {
-        const token = tokens[i];
-
-        if (token !== '"') {
-            result.push(token);
-            continue;
-        }
-
-        // The instruction should be immediately before "
-        const instruction = result[result.length - 1];
-
-        if (!instruction || !this.opcodesWithParameters.includes(instruction)) {
-            throw new Error(`Invalid multi-instruction at token ${i}`);
-        }
-
-        // Remove the instruction because we'll add it before every value.
-        result.pop();
-
-        let foundClosingQuote = false;
-
-        i++;
-
-        while (i < tokens.length) {
-            const value = tokens[i];
-
-            if (value === '"') {
-                foundClosingQuote = true;
-                break;
-            }
-
-            result.push(instruction, value);
-            i++;
-        }
-
-        if (!foundClosingQuote) {
-            throw new Error(`Unterminated multi-instruction starting at token ${i}`);
-        }
-    }
-
-    return result;
-}
-
 export default class Assembler {
 
     private ram: ramOperations;
@@ -98,6 +53,54 @@ export default class Assembler {
         "ECD",
         "JCN"
     ]
+    
+    private expandMultiInstruction(tokens: string[]): string[] {
+        const result: string[] = [];
+
+        for (let i = 0; i < tokens.length; i++) {
+            const token = tokens[i];
+
+            if (token!== undefined && token !== '"') {
+                result.push(token);
+                continue;
+            }
+
+            // The instruction should be immediately before "
+            const instruction = result[result.length - 1];
+
+            if (!instruction || !this.opcodesWithParameters.includes(instruction)) {
+                throw new Error(`Invalid multi-instruction at token ${i}`);
+            }
+
+            // Remove the instruction because we'll add it before every value.
+            result.pop();
+
+            let foundClosingQuote = false;
+
+            i++;
+
+            while (i < tokens.length) {
+                const value = tokens[i];
+
+                if(value !== undefined){
+                    if (value === '"') {
+                        foundClosingQuote = true;
+                        break;
+                    }
+
+                    result.push(instruction, value);
+                    i++;
+                }
+            }
+
+            if (!foundClosingQuote) {
+                throw new Error(`Unterminated multi-instruction starting at token ${i}`);
+            }
+        }
+
+        return result;
+    }
+
 
     assemble(source: string): number[] {
         const bytecode: number[] = [];

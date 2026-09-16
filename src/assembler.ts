@@ -101,7 +101,6 @@ export default class Assembler {
         return result;
     }
 
-
     assemble(source: string): number[] {
         const bytecode: number[] = [];
         const symbolTable: { [label: string]: number }  = {};
@@ -132,6 +131,10 @@ export default class Assembler {
                 tokens = tokens.slice(0, start).concat(tokens.slice(end + 1));
             }
         }
+
+        // Expand Tokens Arr to include multi-instructions
+
+        tokens = this.expandMultiInstruction(tokens)
 
         // Generate Symbol Table
 

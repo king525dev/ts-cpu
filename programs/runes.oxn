@@ -1,0 +1,21 @@
+@num
+@max
+
+LDA 5
+STA max
+
+LDA 0
+STA num
+
+>loop
+LDA " 100 108 114 111 87 111 108 108 101 104 95 "
+DCD * 10
+LDA num
+INC
+DUP
+OUT
+LDA max
+GTH
+JCN loop
+
+BRK

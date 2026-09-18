@@ -107,7 +107,7 @@ export default class Assembler {
         for (let i = 0; i < tokens.length; i++) {
             const token = tokens[i];
 
-            if (token !== "*") {
+            if (token!== undefined && token !== "*") {
                 result.push(token);
                 continue;
             }

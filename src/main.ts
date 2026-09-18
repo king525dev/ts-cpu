@@ -2,21 +2,26 @@ import Assembler  from "./assembler.js";
 import CPU from "./cpu/cpu.js";
 
 const source = `
-VAR age
-VAR multiplier
+@num
+@max
 
-LDA 20
-STA age
-LDA 2
-STA multiplier
+LDA 5
+STA max
 
-LDR age
-LDR multiplier
-LOG
+LDA 0
+STA num
 
-MUL
-
+>loop
+LDA " 100 108 114 111 87 111 108 108 101 104 95 "
+DCD * 10
+LDA num
+INC
+DUP
 OUT
+LDA max
+LTH
+JCN loop
+
 BRK
 `;
 

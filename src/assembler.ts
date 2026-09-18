@@ -101,6 +101,53 @@ export default class Assembler {
         return result;
     }
 
+    private expandRepeatedInstruction(tokens: string[]): string[] {
+        const result: string[] = [];
+
+        for (let i = 0; i < tokens.length; i++) {
+            const token = tokens[i];
+
+            if (token !== "*") {
+                result.push(token);
+                continue;
+            }
+
+            const instruction = result[result.length - 1];
+            const countToken = tokens[i + 1];
+
+            if (!instruction || !(instruction in this.opcodes)) {
+                throw new Error(
+                    `Invalid repeated instruction at token ${i}: "${instruction}"`
+                );
+            }
+
+            if (countToken === undefined || !isValidNumber(countToken, "dec")) {
+                throw new Error(
+                    `Invalid repeat count at token ${i + 1}: "${countToken}"`
+                );
+            }
+
+            const count = parseNumber(countToken);
+
+            if (count < 0) {
+                throw new Error(`Repeat count cannot be negative: ${count}`);
+            }
+
+            // Remove the instruction we already added.
+            result.pop();
+
+            // Add it count times.
+            for (let j = 0; j < count; j++) {
+                result.push(instruction);
+            }
+
+            // Skip the count token.
+            i++;
+        }
+
+        return result;
+    }
+
     assemble(source: string): number[] {
         const bytecode: number[] = [];
         const symbolTable: { [label: string]: number }  = {};
@@ -132,9 +179,10 @@ export default class Assembler {
             }
         }
 
-        // Expand Tokens Arr to include multi-instructions
+        // Expand Tokens Arr to include multi-instructions && expanded instructions
 
         tokens = this.expandMultiInstruction(tokens)
+        tokens = this.expandRepeatedInstruction(tokens);
 
         // Generate Symbol Table
 

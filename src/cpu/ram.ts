@@ -155,4 +155,4 @@ class RAM {
     }
 }
 
-export default new RAM;
+export default RAM;

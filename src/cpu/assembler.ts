@@ -1,4 +1,6 @@
-// src/core/assembler.ts
+// --------------------------------------------------------- //
+// ASSEMBLER.ts
+// --------------------------------------------------------- //
 
 /**
  * Turns assembly source text into bytecode for the CPU.

@@ -1,3 +1,7 @@
+// --------------------------------------------------------- //
+// STACK.ts
+// --------------------------------------------------------- //
+
 export default class Stack {
     private data: Uint8Array;
     private sp: number;   // Stack Pointer

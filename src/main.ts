@@ -1,4 +1,4 @@
-import Assembler  from "./assembler.js";
+import Assembler  from "./cpu/assembler.js";
 import CPU from "./cpu/cpu.js";
 
 const source = `

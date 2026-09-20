@@ -1,4 +1,6 @@
-// src/core/hardware/adders.ts
+// --------------------------------------------------------- //
+// ADDERS.ts
+// --------------------------------------------------------- //
 
 import LogicGates from "./logicGates.js";
 import type { Bit } from "./transistor.js";
@@ -62,7 +64,7 @@ export function fullAdder(a: Bit, b: Bit, carryIn: Bit): AdderResult {
  * The final carry out is discarded — this is how every 8-bit CPU behaves.
  * It is exactly what `(a + b) & 0xff` does in JavaScript.
  *
- * We process bits from LSB (index 7) to MSB (index 0) so that each
+ * The bits are processed from LSB (index 7) to MSB (index 0) so that each
  * column's carry is available for the next one.
  */
 export function addBytes(a: Byte, b: Byte): Byte {

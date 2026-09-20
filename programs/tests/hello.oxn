@@ -1,0 +1,11 @@
+// Prints "Hi!" followed by a newline. //
+////
+// DCD pops the top of the stack and prints it as an ASCII character, so we //
+// push the characters in reverse order (the newline first, 'H' last). //
+////
+// The LDA "..." form is a shorthand: it expands to one LDA per value. //
+// The DCD * 4 form repeats DCD four times. //
+
+LDA " 10 33 105 72 "
+DCD * 4
+BRK

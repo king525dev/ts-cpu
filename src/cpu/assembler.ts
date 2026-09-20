@@ -17,7 +17,7 @@
 
 function parseNumber(token: string): number {
     if (/^(?:0[xX][0-9a-fA-F]+)$/.test(token)) return parseInt(token, 16);
-    if (/^(?:0[bB][01]+)$/.test(token)) return parseInt(token, 2);
+    if (/^(?:0[bB][01]+)$/.test(token)) return parseInt(token.slice(2), 2);
     return parseInt(token, 10);
 }
 

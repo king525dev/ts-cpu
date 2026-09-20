@@ -10,25 +10,25 @@ import type { CPUOutput, CPUDisplay } from "../src/cpu/io.js";
 function makeCaptureOutput() {
     const numbers: number[] = [];
     const chars: string[] = [];
-    const stacks: number[][] = [];
+    const outputStacks: number[][] = [];
     const errors: string[] = [];
     const output: CPUOutput = {
         writeNumber: (v) => numbers.push(v),
         writeChar: (c) => chars.push(c),
-        writeStack: (v) => stacks.push([...v]),
+        writeStack: (v) => outputStacks.push([...v]),
         writeError: (m) => errors.push(m),
     };
-    return { output, numbers, chars, stacks, errors };
+    return { output, numbers, chars, outputStacks, errors };
 }
 
 function makeCaptureDisplay() {
     const tops: number[] = [];
-    const stacks: number[][] = [];
+    const displayStacks: number[][] = [];
     const display: CPUDisplay = {
         showTop: (v) => tops.push(v),
-        printStack: (v) => stacks.push([...v]),
+        printStack: (v) => displayStacks.push([...v]),
     };
-    return { display, tops, stacks };
+    return { display, tops, displayStacks };
 }
 
 function run(source: string) {
@@ -38,7 +38,15 @@ function run(source: string) {
     const cpu = new CPU(out.output, disp.display);
     cpu.load(bytecode);
     cpu.run();
-    return { ...out, ...disp, cpu };
+    return {
+        numbers: out.numbers,
+        chars: out.chars,
+        outputStacks: out.outputStacks,
+        errors: out.errors,
+        tops: disp.tops,
+        displayStacks: disp.displayStacks,
+        cpu,
+    };
 }
 
 describe("CPU", () => {
@@ -58,13 +66,13 @@ describe("CPU", () => {
     });
 
     it("calls display.printStack on PRT", () => {
-        const { stacks } = run("LDA 1\nLDA 2\nLDA 3\nPRT\nBRK");
-        expect(stacks).toEqual([[1, 2, 3]]);
+        const { displayStacks } = run("LDA 1\nLDA 2\nLDA 3\nPRT\nBRK");
+        expect(displayStacks).toEqual([[1, 2, 3]]);
     });
 
     it("calls output.writeStack on LOG", () => {
-        const { stacks } = run("LDA 7\nLDA 8\nLOG\nBRK");
-        expect(stacks).toEqual([[7, 8]]);
+        const { outputStacks } = run("LDA 7\nLDA 8\nLOG\nBRK");
+        expect(outputStacks).toEqual([[7, 8]]);
     });
 
     it("stores and loads from RAM", () => {

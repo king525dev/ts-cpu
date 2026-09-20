@@ -1,8 +1,8 @@
 // tests/cli/adapters.test.ts
 
 import { describe, it, expect, vi, beforeEach, afterEach } from "vitest";
-import NodeOutput from "../src/cli/NodeOutput.js";
-import TerminalDisplay from "../src/cli/TerminalDisplay.js";
+import NodeOutput from "../../src/cli/NodeOutput.js";
+import TerminalDisplay from "../../src/cli/TerminalDisplay.js";
 
 /**
  * Capture everything written to process.stdout / process.stderr by

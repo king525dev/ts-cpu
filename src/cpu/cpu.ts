@@ -2,7 +2,7 @@
 // CPU.ts
 // --------------------------------------------------------- //
 
-import ALU from "./alu.js";
+import ALU from "./hardware/alu.js";
 import Stack from "./stack.js";
 import RAM from "./ram.js";
 import type { CPUOutput, CPUDisplay } from "./io.js";

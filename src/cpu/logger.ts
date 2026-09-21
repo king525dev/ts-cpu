@@ -94,7 +94,16 @@ export default class Logger {
      * where the real problem is, and the bottom is framework noise.
      */
     error(message: string, cause?: unknown): void {
-        this.line(`ERR! ${message}`);
+        let headline = `ERR! ${message}`;
+        if (
+            cause instanceof Error &&
+            cause.message &&
+            !message.includes(cause.message)
+        ) {
+            headline += `: ${cause.message}`;
+        }
+        this.line(headline);
+
         if (cause instanceof Error && cause.stack) {
             const frames = cause.stack.split("\n").slice(1, 4);
             for (const frame of frames) {
@@ -158,6 +167,56 @@ export default class Logger {
             `RAM ${isWrite ? "wrote" : "read "} ` +
             `${toHexByte(value)} @ ${toHexByte(addr)}`,
         );
+    }
+
+    // -----------------------------------------------------------------
+    // Assembler events
+    // -----------------------------------------------------------------
+
+    /** Log a named list of tokens, e.g. "After comment stripping: [ LDA 5 ]". */
+    tokens(label: string, tokens: readonly string[]): void {
+        this.line(`${label}: [ ${tokens.join(" ")} ]`);
+    }
+
+    /** A `VAR` or `@name` declaration was given a RAM address. */
+    varAllocated(name: string, address: number): void {
+        this.line(`Assigned '${name}' to RAM address 0x${toHexByte(address)}`);
+    }
+
+    /** A `>label` declaration was assigned a bytecode address. */
+    labelDeclared(name: string, bytecodeAddress: number): void {
+        this.line(`Label '${name}' at bytecode 0x${toHexWord(bytecodeAddress)}`);
+    }
+
+    /** A variable name was resolved to an address in the emit pass. */
+    varReferenced(name: string, address: number): void {
+        this.line(`  Referenced var '${name}' (0x${toHexByte(address)})`);
+    }
+
+    /** A label name was resolved to a bytecode address in the emit pass. */
+    labelReferenced(name: string, bytecodeAddress: number): void {
+        this.line(
+            `  Referenced label '${name}' (0x${toHexWord(bytecodeAddress)})`,
+        );
+    }
+
+    /**
+     * Dump the symbol table after the scan pass. Variables and labels are
+     * printed in declaration order. Skipped entirely when both are empty, so
+     * trivial programs don't get a noisy header with nothing under it.
+     */
+    symbolTable(
+        labels: ReadonlyMap<string, number>,
+        vars: ReadonlyMap<string, number>,
+    ): void {
+        if (labels.size === 0 && vars.size === 0) return;
+        this.line("Symbol table:");
+        for (const [name, addr] of vars) {
+            this.line(`  var   ${name} -> 0x${toHexByte(addr)}`);
+        }
+        for (const [name, addr] of labels) {
+            this.line(`  label ${name} -> 0x${toHexWord(addr)}`);
+        }
     }
 
     // -----------------------------------------------------------------

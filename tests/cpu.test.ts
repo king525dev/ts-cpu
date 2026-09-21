@@ -2,6 +2,7 @@ import { describe, it, expect } from "vitest";
 import CPU from "../src/cpu/cpu.js";
 import Assembler from "../src/cpu/assembler.js";
 import type { CPUOutput, CPUDisplay } from "../src/cpu/io.js";
+import Logger, { type LogSink, nullSink } from "../src/cpu/logger.js";
 
 /**
  * Captures everything the CPU sends out. This is the whole reason for the
@@ -120,5 +121,25 @@ describe("CPU", () => {
         cpu.load([0x42]); // 0x42 is not assigned
         cpu.running = true;
         expect(() => cpu.step()).toThrow(/Unknown opcode/);
+    });
+
+    it("emits step logs when a Logger is provided", () => {
+        const lines: string[] = [];
+        const sink: LogSink = { write: (l) => lines.push(l) };
+        const logger = new Logger({ sink, timestampFormat: () => "TS" });
+
+        const { output } = makeCaptureOutput();
+        const { display } = makeCaptureDisplay();
+        const cpu = new CPU(output, display, logger);
+        cpu.load(new Assembler().assemble("LDA 5\nOUT\nBRK"));
+        cpu.run();
+
+        const joined = lines.join("\n");
+        // One line per executed instruction, including the BRK.
+        expect(joined).toContain("op=0x01");   // LDA
+        expect(joined).toContain("op=0x18");   // OUT
+        expect(joined).toContain("op=0xff");   // BRK
+        // The LDA step should show the pushed value on the stack.
+        expect(joined).toMatch(/pc=0x0000 op=0x01 sp=1\] Stack: \[ 05 \]/);
     });
 });

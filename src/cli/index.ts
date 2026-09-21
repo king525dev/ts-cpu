@@ -8,6 +8,7 @@ import CPU from "../cpu/cpu.js";
 import { nullDisplay } from "../cpu/io.js";
 import NodeOutput from "./NodeOutput.js";
 import TerminalDisplay from "./TerminalDisplay.js";
+import Logger, { type LogSink } from "../cpu/logger.js";
 
 // ---------------------------------------------------------------------
 // Exit codes
@@ -115,6 +116,14 @@ function parseCLI(argv: string[]): ParseResult {
 function main(): number {
     const result = parseCLI(process.argv.slice(2));
 
+    const logSink: LogSink = {
+        write(line) {
+            process.stderr.write(line + "\n");
+        },
+    };
+    const logger = new Logger({ sink: logSink });
+    logger.start("OXNTAL");
+
     if (result.kind === "help") {
         process.stdout.write(USAGE);
         return EXIT_OK;
@@ -151,19 +160,26 @@ function main(): number {
     // -----------------------------------------------------------------
     // Assemble
     // -----------------------------------------------------------------
+    logger.event("Initialised Assembler");
+    const assembler = new Assembler(logger);
     let bytecode: number[];
     try {
-        bytecode = new Assembler().assemble(source);
+        bytecode = assembler.assemble(source);
     } catch (err) {
+        logger.error((err as Error).message, err);
+        logger.stop();
         output.writeError(`Assembly error: ${(err as Error).message}`);
         return EXIT_ASSEMBLY;
     }
+    logger.bytecode(bytecode);
 
     // -----------------------------------------------------------------
     // Run
     // -----------------------------------------------------------------
-    const cpu = new CPU(output, display);
+    logger.event("CPU initialised");
+    const cpu = new CPU(output, display, logger);
     cpu.load(bytecode);
+    logger.event("Execution started");
 
     try {
         if (opts.trace) {
@@ -172,6 +188,7 @@ function main(): number {
             cpu.run();
         }
     } catch (err) {
+        logger.stop();
         output.writeError(`Runtime error: ${(err as Error).message}`);
         return EXIT_RUNTIME;
     }

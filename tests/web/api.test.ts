@@ -81,8 +81,9 @@ describe("run()", () => {
     it("returns chars separately from stdout", () => {
         const r = run({ source: 'LDA " 33 105 72 "\nDCD * 3\nBRK' });
         expect(r.ok).toBe(true);
-        expect(r.chars).toEqual(["!", "i", "H"]);
-        expect(r.stdout).toBe("!iH");
+        // Stack is LIFO: the last value pushed (72 = 'H') comes out first.
+        expect(r.chars).toEqual(["H", "i", "!"]);
+        expect(r.stdout).toBe("Hi!");
     });
 
     it("returns the bytecode alongside the results", () => {

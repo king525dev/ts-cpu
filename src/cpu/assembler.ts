@@ -344,6 +344,11 @@ export default class Assembler {
                 }
                 continue;
             }
+
+            throw new Error(
+                `Unknown token at position ${i}: "${token}"`,
+            );
+            
         }
 
         return bytecode;

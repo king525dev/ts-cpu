@@ -8,7 +8,7 @@ import { nullDisplay } from "../cpu/io.js";
 import NodeOutput from "./NodeOutput.js";
 import TerminalDisplay from "./TerminalDisplay.js";
 import Logger, { type LogSink } from "../cpu/logger.js";
-import FileLogSink from "./FileLogSink.js";
+import { FileLogSink } from "./FileLogSink.js";
 
 // ---------------------------------------------------------------------
 // Exit codes
@@ -32,13 +32,14 @@ Usage:
     oxntal --help                     Show this message
 
 Options:
-    --no-display        Suppress graphical (SHW / PRT) output
-    --log <path>        Write the debug log to <path>. Default: oxntal.log
-                        Use '--log -' to write to stderr instead.
-    --no-log            Disable logging entirely
-    --trace             Print pc, opcode, and stack-pointer for each instruction.  
-                        Alias for '--log -'
-    -h, --help          Show this message
+    --no-display            Suppress graphical (SHW / PRT) output
+    --log <path>            Write the debug log to <path>. Default: mycpu.log
+                            Use '--log -' to write to stderr instead.
+    --trace                 Alias for '--log -'
+    --no-log                Disable the debug log entirely
+    --verbose               Step through execution, printing pc, opcode, and
+                            stack to stderr after each instruction
+    -h, --help              Show this message
 
 Exit codes:
     0  success
@@ -50,6 +51,7 @@ Exit codes:
 Examples:
     oxntal examples/hello.oxn
     oxntal run examples/countdown.oxn --trace
+    oxntal examples/countdown.oxn --log debug.log
 `;
 
 // ---------------------------------------------------------------------
@@ -63,9 +65,9 @@ type LogTarget =
 
 interface Options {
     file: string;
-    trace: boolean;
     display: boolean;
     logTarget: LogTarget;
+    verbose: boolean;
 }
 
 type ParseResult =
@@ -81,6 +83,7 @@ function parseCLI(argv: string[]): ParseResult {
             options: {
                 "no-display": { type: "boolean", default: false },
                 "trace": { type: "boolean", default: false },
+                "verbose": { type: "boolean", default: false },
                 "help": { type: "boolean", short: "h", default: false },
                 "log": { type: "string" },
                 "no-log": { type: "boolean", default: false },
@@ -138,18 +141,41 @@ function parseCLI(argv: string[]): ParseResult {
     } else if (logPath !== undefined) {
         logTarget = { kind: "file", path: logPath };
     } else {
-        logTarget = { kind: "file", path: "mycpu.log" };
+        logTarget = { kind: "file", path: "oxntal.log" };
     }
 
     return {
         kind: "ok",
         opts: {
             file,
-            trace: values.trace === true,
             display: values["no-display"] !== true,
             logTarget,
+            verbose: values.verbose === true,
         },
     };
+}
+
+// ---------------------------------------------------------------------
+// Logger factory
+// ---------------------------------------------------------------------
+
+function makeLogger(target: LogTarget): Logger {
+    switch (target.kind) {
+        case "none":
+            return new Logger();
+        case "stderr":
+            return new Logger({
+                sink: {
+                    write(line: string) {
+                        process.stderr.write(line + "\n");
+                    },
+                },
+            });
+        case "file":
+            return new Logger({
+                sink: new FileLogSink({ path: target.path }),
+            });
+    }
 }
 
 // ---------------------------------------------------------------------
@@ -158,12 +184,6 @@ function parseCLI(argv: string[]): ParseResult {
 
 function main(): number {
     const result = parseCLI(process.argv.slice(2));
-
-    const logSink: LogSink = {
-        write(line) {
-            process.stderr.write(line + "\n");
-        },
-    };
 
     if (result.kind === "help") {
         process.stdout.write(USAGE);
@@ -189,98 +209,91 @@ function main(): number {
         output.writeError((err as Error).message);
         return EXIT_FILE;
     }
+
+    process.on("exit", () => {
+        logger.stop();
+    });
+
     logger.start("OXNTAL");
     if (opts.logTarget.kind === "file") {
         logger.info(`Logging to ${opts.logTarget.path}`);
     }
 
-    // -----------------------------------------------------------------
-    // Read the source file
-    // -----------------------------------------------------------------
-    let source: string;
-    try {
-        source = readFileSync(opts.file, "utf8");
-    } catch (err) {
-        const e = err as NodeJS.ErrnoException;
-        if (e.code === "ENOENT") {
-            output.writeError(`File not found: ${opts.file}`);
-        } else if (e.code === "EISDIR") {
-            output.writeError(`Not a file: ${opts.file}`);
-        } else {
-            output.writeError(`Could not read ${opts.file}: ${e.message}`);
+    try{
+        // -----------------------------------------------------------------
+        // Read the source file
+        // -----------------------------------------------------------------
+        let source: string;
+        try {
+            source = readFileSync(opts.file, "utf8");
+        } catch (err) {
+            const e = err as NodeJS.ErrnoException;
+            if (e.code === "ENOENT") {
+                output.writeError(`File not found: ${opts.file}`);
+            } else if (e.code === "EISDIR") {
+                output.writeError(`Not a file: ${opts.file}`);
+            } else {
+                output.writeError(`Could not read ${opts.file}: ${e.message}`);
+            }
+            logger.stop();
+            return EXIT_FILE;
         }
-        logger.stop();
-        return EXIT_FILE;
-    }
 
-    // -----------------------------------------------------------------
-    // Assemble
-    // -----------------------------------------------------------------
-    logger.event("Initialised Assembler");
-    const assembler = new Assembler(logger);
-    let bytecode: number[];
-    try {
-        bytecode = assembler.assemble(source);
-    } catch (err) {
-        logger.error((err as Error).message, err);
-        logger.stop();
-        output.writeError(`Assembly error: ${(err as Error).message}`);
-        return EXIT_ASSEMBLY;
-    }
-    logger.bytecode(bytecode);
-
-    // -----------------------------------------------------------------
-    // Run
-    // -----------------------------------------------------------------
-    logger.event("CPU initialised");
-    const cpu = new CPU(output, display, logger);
-    cpu.load(bytecode);
-    logger.event("Execution started");
-
-    try {
-        if (opts.trace) {
-            runWithTrace(cpu);
-        } else {
-            cpu.run();
+        // -----------------------------------------------------------------
+        // Assemble
+        // -----------------------------------------------------------------
+        logger.event("Initialised Assembler");
+        const assembler = new Assembler(logger);
+        let bytecode: number[];
+        try {
+            bytecode = assembler.assemble(source);
+        } catch (err) {
+            logger.error((err as Error).message, err);
+            logger.stop();
+            output.writeError(`Assembly error: ${(err as Error).message}`);
+            return EXIT_ASSEMBLY;
         }
-    } catch (err) {
+        logger.bytecode(bytecode);
+
+        // -----------------------------------------------------------------
+        // Run
+        // -----------------------------------------------------------------
+        logger.event("CPU initialised");
+        const cpu = new CPU(output, display, logger);
+        cpu.load(bytecode);
+        logger.event("Execution started");
+
+        try {
+            if (opts.verbose) {
+                runVerbose(cpu);
+            } else {
+                cpu.run();
+            }
+        } catch (err) {
+            logger.stop();
+            output.writeError(`Runtime error: ${(err as Error).message}`);
+            return EXIT_RUNTIME;
+        }
+
+        return EXIT_OK;
+    } finally {
         logger.stop();
-        output.writeError(`Runtime error: ${(err as Error).message}`);
-        return EXIT_RUNTIME;
-    }
-
-    return EXIT_OK;
-}
-
-function makeLogger(target: LogTarget): Logger {
-    switch (target.kind) {
-        case "none":
-            return new Logger();
-        case "stderr":
-            return new Logger({
-                sink: {
-                    write(line: string) {
-                        process.stderr.write(line + "\n");
-                    },
-                },
-            });
-        case "file":
-            return new Logger({ sink: new FileLogSink({ path: target.path }) });
     }
 }
 
 // ---------------------------------------------------------------------
-// Trace mode
+// --verbose: hand-formatted per-step trace
 // ---------------------------------------------------------------------
 //
-// Prints one line per instruction to stderr:
+// Prints one line per instruction to stderr. Distinct from --trace:
+// --verbose uses this fixed layout below; --trace routes the full Logger
+// to stderr and includes assembler events, RAM accesses, jump events, etc.
+//
+// Example output:
 //
 //   [pc=0004 sp=  2 op=0x1d] stack=[10 33]
 //
-// stderr (not stdout) so that `oxntal foo.oxn --trace > out.txt` still
-// captures only the program's own output on stdout.
-//
-function runWithTrace(cpu: CPU): void {
+function runVerbose(cpu: CPU): void {
     cpu.running = true;
     while (cpu.running) {
         const pc = cpu.pc;

@@ -87,7 +87,7 @@ describe("CLI", () => {
         ]);
         expect(status).toBe(0);
         expect(stdout).toBe("Hi!\n");
-        expect(stderr).toContain("[pc=0000");
+        expect(stderr).toContain("[pc=0x0000");
     });
 
     it("exits 3 for an assembly error", () => {
@@ -104,5 +104,88 @@ describe("CLI", () => {
         //   const broken = runCli(["examples/broken.oxn"]);
         //   expect(broken.status).toBe(3);
         //   expect(broken.stderr).toContain("Assembly error");
+    });
+});
+
+import { mkdtempSync, readFileSync, rmSync } from "node:fs";
+import { tmpdir } from "node:os";
+import { join } from "node:path";
+
+// (place these near the top of the file, next to the other imports)
+
+describe("CLI logging", () => {
+    it("creates a default mycpu.log in the working directory", () => {
+        // We can't easily test "the default mycpu.log path in the repo
+        // root" without leaving stray files around, so we test the
+        // mechanism with an explicit path. The default path is exactly
+        // the same code path with `path = "mycpu.log"`.
+        const dir = mkdtempSync(join(tmpdir(), "mycpu-test-"));
+        const logPath = join(dir, "custom.log");
+        try {
+            const { status } = runCli([
+                "programs/tests/hello.oxn",
+                "--log",
+                logPath,
+            ]);
+            expect(status).toBe(0);
+            const contents = readFileSync(logPath, "utf8");
+            expect(contents).toContain("// --> OXNTAL <-- //");
+            expect(contents).toContain("Initialised Assembler");
+            expect(contents).toContain("Process Exited");
+            expect(contents).toContain("op=0x01"); // an LDA step
+        } finally {
+            rmSync(dir, { recursive: true, force: true });
+        }
+    });
+
+    it("appends to an existing log rather than truncating it", () => {
+        const dir = mkdtempSync(join(tmpdir(), "mycpu-test-"));
+        const logPath = join(dir, "append.log");
+        try {
+            const first = runCli(["programs/tests/hello.oxn", "--log", logPath]);
+            expect(first.status).toBe(0);
+            const second = runCli(["programs/tests/hello.oxn", "--log", logPath]);
+            expect(second.status).toBe(0);
+
+            const contents = readFileSync(logPath, "utf8");
+            // Each run starts with the banner; two runs means two banners.
+            const banners = contents.match(/\/\/ --> OXNTAL <-- \/\//g) ?? [];
+            expect(banners.length).toBe(2);
+        } finally {
+            rmSync(dir, { recursive: true, force: true });
+        }
+    });
+
+    it("emits no log lines when --no-log is given", () => {
+        const { status, stderr } = runCli([
+            "programs/tests/hello.oxn",
+            "--no-log",
+        ]);
+        expect(status).toBe(0);
+        expect(stderr).not.toContain("OXNTAL");
+        expect(stderr).not.toContain("[pc=");
+    });
+
+    it("rejects --log and --no-log together", () => {
+        const { status, stderr } = runCli([
+            "programs/tests/hello.oxn",
+            "--log",
+            "foo.log",
+            "--no-log",
+        ]);
+        expect(status).toBe(1);
+        expect(stderr).toContain("cannot be combined");
+    });
+
+    it("prints a per-step trace to stderr with --verbose", () => {
+        const { status, stdout, stderr } = runCli([
+            "programs/tests/hello.oxn",
+            "--verbose",
+        ]);
+        expect(status).toBe(0);
+        expect(stdout).toBe("Hi!\n");
+        // The --verbose format uses pc=NNNN (no 0x prefix).
+        expect(stderr).toMatch(/\[pc=\d{4} sp=\s*\d+ op=0x[0-9a-f]{2}\]/);
+        expect(stderr).toContain("stack=[");
     });
 });

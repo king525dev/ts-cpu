@@ -1,5 +1,4 @@
 #!/usr/bin/env node
-// src/cli/index.ts
 
 import { readFileSync } from "node:fs";
 import { parseArgs } from "node:util";
@@ -9,6 +8,7 @@ import { nullDisplay } from "../cpu/io.js";
 import NodeOutput from "./NodeOutput.js";
 import TerminalDisplay from "./TerminalDisplay.js";
 import Logger, { type LogSink } from "../cpu/logger.js";
+import FileLogSink from "./FileLogSink.js";
 
 // ---------------------------------------------------------------------
 // Exit codes
@@ -32,9 +32,13 @@ Usage:
     oxntal --help                     Show this message
 
 Options:
-    --no-display    Suppress graphical (SHW / PRT) output
-    --trace         Print pc, opcode, and stack-pointer for each instruction
-    -h, --help      Show this message
+    --no-display        Suppress graphical (SHW / PRT) output
+    --log <path>        Write the debug log to <path>. Default: oxntal.log
+                        Use '--log -' to write to stderr instead.
+    --no-log            Disable logging entirely
+    --trace             Print pc, opcode, and stack-pointer for each instruction.  
+                        Alias for '--log -'
+    -h, --help          Show this message
 
 Exit codes:
     0  success
@@ -52,10 +56,16 @@ Examples:
 // Argument parsing
 // ---------------------------------------------------------------------
 
+type LogTarget =
+    | { kind: "file"; path: string }
+    | { kind: "stderr" }
+    | { kind: "none" };
+
 interface Options {
     file: string;
     trace: boolean;
     display: boolean;
+    logTarget: LogTarget;
 }
 
 type ParseResult =
@@ -72,6 +82,8 @@ function parseCLI(argv: string[]): ParseResult {
                 "no-display": { type: "boolean", default: false },
                 "trace": { type: "boolean", default: false },
                 "help": { type: "boolean", short: "h", default: false },
+                "log": { type: "string" },
+                "no-log": { type: "boolean", default: false },
             },
             allowPositionals: true,
             strict: true,
@@ -99,12 +111,43 @@ function parseCLI(argv: string[]): ParseResult {
         };
     }
 
+    // ---- Resolve the log target ----
+
+    const noLog = values["no-log"] === true;
+    const trace = values.trace === true;
+    const logPath = values.log;
+
+    if (noLog && (trace || logPath !== undefined)) {
+        return {
+            kind: "error",
+            message: "--no-log cannot be combined with --log or --trace",
+        };
+    }
+    if (trace && logPath !== undefined) {
+        return {
+            kind: "error",
+            message: "--trace and --log are mutually exclusive",
+        };
+    }
+
+    let logTarget: LogTarget;
+    if (noLog) {
+        logTarget = { kind: "none" };
+    } else if (trace || logPath === "-") {
+        logTarget = { kind: "stderr" };
+    } else if (logPath !== undefined) {
+        logTarget = { kind: "file", path: logPath };
+    } else {
+        logTarget = { kind: "file", path: "mycpu.log" };
+    }
+
     return {
         kind: "ok",
         opts: {
             file,
             trace: values.trace === true,
             display: values["no-display"] !== true,
+            logTarget,
         },
     };
 }
@@ -121,8 +164,6 @@ function main(): number {
             process.stderr.write(line + "\n");
         },
     };
-    const logger = new Logger({ sink: logSink });
-    logger.start("OXNTAL");
 
     if (result.kind === "help") {
         process.stdout.write(USAGE);
@@ -139,6 +180,20 @@ function main(): number {
     const output = new NodeOutput();
     const display = opts.display ? new TerminalDisplay() : nullDisplay;
 
+    // ---- Create logger ----
+    let logger: Logger;
+    try {
+        logger = makeLogger(opts.logTarget);
+    } catch (err) {
+        // Log file could not be opened. Fall back to stderr and tell the user.
+        output.writeError((err as Error).message);
+        return EXIT_FILE;
+    }
+    logger.start("OXNTAL");
+    if (opts.logTarget.kind === "file") {
+        logger.info(`Logging to ${opts.logTarget.path}`);
+    }
+
     // -----------------------------------------------------------------
     // Read the source file
     // -----------------------------------------------------------------
@@ -154,6 +209,7 @@ function main(): number {
         } else {
             output.writeError(`Could not read ${opts.file}: ${e.message}`);
         }
+        logger.stop();
         return EXIT_FILE;
     }
 
@@ -194,6 +250,23 @@ function main(): number {
     }
 
     return EXIT_OK;
+}
+
+function makeLogger(target: LogTarget): Logger {
+    switch (target.kind) {
+        case "none":
+            return new Logger();
+        case "stderr":
+            return new Logger({
+                sink: {
+                    write(line: string) {
+                        process.stderr.write(line + "\n");
+                    },
+                },
+            });
+        case "file":
+            return new Logger({ sink: new FileLogSink({ path: target.path }) });
+    }
 }
 
 // ---------------------------------------------------------------------

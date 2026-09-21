@@ -1,5 +1,3 @@
-// src/cli/TerminalDisplay.ts
-
 import type { CPUDisplay } from "../cpu/io.js";
 
 /**

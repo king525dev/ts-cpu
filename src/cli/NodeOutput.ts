@@ -1,5 +1,3 @@
-// src/cli/NodeOutput.ts
-
 import type { CPUOutput } from "../cpu/io.js";
 
 /**

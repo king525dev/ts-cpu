@@ -1,5 +1,3 @@
-// src/web/api.ts
-
 import Assembler from "../cpu/assembler.js";
 import CPU from "../cpu/cpu.js";
 import Logger from "../cpu/logger.js";
@@ -14,22 +12,19 @@ import { StringLogSink } from "./StringLogSink.js";
 // ---------------------------------------------------------------------
 
 export interface AssembleOptions {
-    /** If true, the debug log is captured and returned in the result. */
-    captureLog?: boolean;
+    captureLog?: boolean | undefined;
 }
 
 export interface AssembleResult {
     ok: boolean;
-    bytecode?: number[];
-    log?: string;
-    error?: string;
+    bytecode: number[] | undefined;
+    log: string | undefined;
+    error: string | undefined;
 }
 
 export interface ExecuteOptions {
-    /** If provided, SHW and PRT draw into this canvas. */
-    canvas?: HTMLCanvasElement;
-    /** If true, the debug log is captured and returned in the result. */
-    captureLog?: boolean;
+    canvas?: HTMLCanvasElement | undefined;
+    captureLog?: boolean | undefined;
 }
 
 export interface ExecuteResult {
@@ -38,20 +33,20 @@ export interface ExecuteResult {
     stderr: string;
     numbers: number[];
     chars: string[];
-    /** The final contents of the stack, bottom-first. */
     finalStack: number[];
-    log?: string;
-    /** Only present when ok === false. */
-    error?: {
-        kind: "runtime";
-        message: string;
-    };
+    log: string | undefined;
+    error: ExecuteError | undefined;
+}
+
+export interface ExecuteError {
+    kind: "runtime";
+    message: string;
 }
 
 export interface RunOptions {
     source: string;
-    canvas?: HTMLCanvasElement;
-    captureLog?: boolean;
+    canvas?: HTMLCanvasElement | undefined;
+    captureLog?: boolean | undefined;
 }
 
 export interface RunResult {
@@ -61,12 +56,14 @@ export interface RunResult {
     numbers: number[];
     chars: string[];
     finalStack: number[];
-    bytecode?: number[];
-    log?: string;
-    error?: {
-        kind: "assembly" | "runtime";
-        message: string;
-    };
+    bytecode: number[] | undefined;
+    log: string | undefined;
+    error: RunError | undefined;
+}
+
+export interface RunError {
+    kind: "assembly" | "runtime";
+    message: string;
 }
 
 // ---------------------------------------------------------------------
@@ -85,16 +82,26 @@ export function assemble(
     const logSink = options.captureLog ? new StringLogSink() : null;
     const logger = logSink ? new Logger({ sink: logSink }) : new Logger();
 
+    if (logSink) logger.start("MyCPU");
+
     try {
         const bytecode = new Assembler(logger).assemble(source);
+        if (logSink) logger.bytecode(bytecode);
+        if (logSink) logger.stop();
         return {
             ok: true,
             bytecode,
             log: logSink?.toString(),
+            error: undefined,
         };
     } catch (err) {
+        if (logSink) {
+            logger.error((err as Error).message, err);
+            logger.stop();
+        }
         return {
             ok: false,
+            bytecode: undefined,
             log: logSink?.toString(),
             error: (err as Error).message,
         };
@@ -117,12 +124,29 @@ export function execute(
         ? new CanvasDisplay(options.canvas)
         : nullDisplay;
 
+    if (logSink) logger.start("MyCPU");
+
+    logger.event("CPU initialised");
     const cpu = new CPU(output, display, logger);
     cpu.load([...bytecode]);
+    logger.event("Execution started");
 
     try {
         cpu.run();
+        if (logSink) logger.stop();
+        return {
+            ok: true,
+            stdout: output.getStdout(),
+            stderr: output.getStderr(),
+            numbers: output.getNumbers(),
+            chars: output.getChars(),
+            finalStack: snapshotStack(cpu),
+            log: logSink?.toString(),
+            error: undefined,
+        };
     } catch (err) {
+        // The CPU's step() already logged this with pc/opcode context.
+        if (logSink) logger.stop();
         return {
             ok: false,
             stdout: output.getStdout(),
@@ -137,25 +161,15 @@ export function execute(
             },
         };
     }
-
-    return {
-        ok: true,
-        stdout: output.getStdout(),
-        stderr: output.getStderr(),
-        numbers: output.getNumbers(),
-        chars: output.getChars(),
-        finalStack: snapshotStack(cpu),
-        log: logSink?.toString(),
-    };
 }
 
 /**
- * The one-shot entry point: assemble then execute in a single call.
- *
- * This is what most consumers want.
+ * Assemble then execute in a single call.
  */
 export function run(options: RunOptions): RunResult {
-    const asm = assemble(options.source, { captureLog: options.captureLog });
+    const asm = assemble(options.source, {
+        captureLog: options.captureLog,
+    });
 
     if (!asm.ok || !asm.bytecode) {
         return {
@@ -165,6 +179,7 @@ export function run(options: RunOptions): RunResult {
             numbers: [],
             chars: [],
             finalStack: [],
+            bytecode: undefined,
             log: asm.log,
             error: {
                 kind: "assembly",
@@ -198,16 +213,10 @@ export function run(options: RunOptions): RunResult {
 // The facade above is the recommended entry point. Everything below is
 // re-exported for callers who want finer control.
 
-export { default as CPU } from "../cpu/cpu.js";
-export { default as Assembler } from "../cpu/assembler.js";
-export { default as Logger } from "../cpu/logger.js";
-export { default as Stack } from "../cpu/stack.js";
-export { default as RAM } from "../cpu/ram.js";
+export { CPU, Assembler, Logger };
+export { BufferOutput, CanvasDisplay, StringLogSink };
 export type { CPUOutput, CPUDisplay } from "../cpu/io.js";
 export type { LogSink } from "../cpu/logger.js";
-export { BufferOutput } from "./BufferOutput.js";
-export { CanvasDisplay } from "./CanvasDisplay.js";
-export { StringLogSink } from "./StringLogSink.js";
 
 // ---------------------------------------------------------------------
 // Helpers

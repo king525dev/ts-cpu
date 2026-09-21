@@ -5,14 +5,28 @@
   "license": "ISC",
   "author": "king525dev",
   "type": "module",
-  "main": "index.js",
+  "main": "./dist/web/mycpu.iife.js",
+  "module": "./dist/web/mycpu.esm.js",
+  "exports": {
+    ".": {
+      "import": "./dist/web/mycpu.esm.js",
+      "require": "./dist/web/mycpu.iife.js"
+    }
+  },
+  "files": [
+    "dist",
+    "README.md",
+    "LICENSE"
+  ],
   "scripts": {
+    "build": "vite build",
     "test": "vitest"
   },
   "devDependencies": {
     "@types/node": "^26.2.0",
     "tsx": "^4.23.12",
     "typescript": "^7.0.2",
+    "vite": "^8.3.0",
     "vitest": "^5.0.1"
   }
 }

@@ -17,6 +17,8 @@
  *
  */
 
+import Logger, { nullLogger } from "./logger.js";
+
 function parseNumber(token: string): number {
     if (/^(?:0[xX][0-9a-fA-F]+)$/.test(token)) return parseInt(token, 16);
     if (/^(?:0[bB][01]+)$/.test(token)) return parseInt(token.slice(2), 2);
@@ -64,6 +66,11 @@ export default class Assembler {
      */
     private readonly firstDataAddress = 1;
     private readonly dataAddressLimit = 256;
+    private readonly logger: Logger;
+
+    constructor(logger: Logger = nullLogger) {
+        this.logger = logger;
+    }
 
     // ---------------------------------------------------------------------
     // Public entry point
@@ -73,11 +80,15 @@ export default class Assembler {
         let tokens = source.trim().split(/\s+/).filter((t) => t.length > 0);
 
         tokens = this.stripComments(tokens);
+        this.logger.tokens("After comment stripping", tokens);
+
         tokens = this.expandMultiInstruction(tokens);
         tokens = this.expandRepeatedInstruction(tokens);
         tokens = this.expandShorthand(tokens);
+        this.logger.tokens("After expansion", tokens);
 
         const { labels, vars } = this.scan(tokens);
+        this.logger.symbolTable(labels, vars);
         return this.emit(tokens, labels, vars);
     }
 
@@ -252,7 +263,9 @@ export default class Assembler {
                 if (nextDataAddress >= this.dataAddressLimit) {
                     throw new Error("Out of data addresses (256 max)");
                 }
-                vars.set(name, nextDataAddress++);
+                vars.set(name, nextDataAddress);
+                this.logger.varAllocated(name, nextDataAddress);
+                nextDataAddress++;
                 i++; // skip name
                 continue;
             }
@@ -267,7 +280,9 @@ export default class Assembler {
                 if (nextDataAddress >= this.dataAddressLimit) {
                     throw new Error("Out of data addresses (256 max)");
                 }
-                vars.set(name, nextDataAddress++);
+                vars.set(name, nextDataAddress);
+                this.logger.varAllocated(name, nextDataAddress);
+                nextDataAddress++;
                 continue;
             }
 
@@ -279,6 +294,7 @@ export default class Assembler {
                 }
                 this.assertUnique(name, labels, vars);
                 labels.set(name, bytecodeAddress);
+                this.logger.labelDeclared(name, bytecodeAddress);
                 continue;
             }
 
@@ -345,11 +361,16 @@ export default class Assembler {
         }
 
         const labelAddr = labels.get(param);
-        if (labelAddr !== undefined) return labelAddr & 0xFF;
+        if (labelAddr !== undefined){ 
+            this.logger.labelReferenced(param, labelAddr);
+            return labelAddr & 0xFF;
+        }
 
         const varAddr = vars.get(param);
-        if (varAddr !== undefined) return varAddr & 0xFF;
-
+        if (varAddr !== undefined){
+            this.logger.varReferenced(param, varAddr);
+            return varAddr & 0xFF;
+        }
         if (isValidNumber(param)) return parseNumber(param) & 0xFF;
 
         throw new Error(

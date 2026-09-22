@@ -6,14 +6,14 @@
   Build the bundle first:  npm run build
   Then open this file directly in a browser (double-click works).
 
-  The bundle is loaded from ../dist/web/mycpu.iife.js via a relative
+  The bundle is loaded from ../dist/web/oxntal.iife.js via a relative
   path, so it points at whatever you built locally.
 -->
 <html lang="en">
 
 <head>
     <meta charset="utf-8" />
-    <title>MyCPU API demo</title>
+    <title>Oxntal Web demo</title>
     <style>
         body {
             font-family: system-ui, sans-serif;
@@ -56,7 +56,7 @@
 </head>
 
 <body>
-    <h1>MyCPU API demo</h1>
+    <h1>Oxntal Web demo</h1>
     <p>This page is a <em>consumer</em> of the bundled library. It is not
         part of the library itself.</p>
 
@@ -93,7 +93,7 @@ BRK
     <pre id="log" style="max-height: 16rem; overflow: auto;"></pre>
 
     <!-- Load the bundle. In a real consumer this would be a CDN URL. -->
-    <script src="../../dist/web/mycpu.iife.js"></script>
+    <script src="../../dist/web/oxntal.iife.js"></script>
     <script>
         const $ = (id) => document.getElementById(id);
         const canvas = $("screen");
@@ -108,12 +108,12 @@ BRK
         }
 
         $("run").addEventListener("click", () => {
-            const r = window.MyCPU.run({ source: $("source").value, canvas });
+            const r = window.Oxntal.run({ source: $("source").value, canvas });
             show(r);
         });
 
         $("run-log").addEventListener("click", () => {
-            const r = window.MyCPU.run({
+            const r = window.Oxntal.run({
                 source: $("source").value,
                 canvas,
                 captureLog: true,

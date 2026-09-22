@@ -57,7 +57,7 @@ export default class Logger {
     start(title = `OXNTAL @ ${ new Date().toLocaleString()}`): void {
         this.startTime = nowMs();
         this.closed = false;
-        this.raw(`// --> ${title} <-- //`);
+        this.raw(`\n\n// --> ${title} <-- //`);
         this.raw("");
     }
 

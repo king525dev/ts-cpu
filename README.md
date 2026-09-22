@@ -70,10 +70,3 @@ If that printed `Hi!` you already have a working machine.
 | 0.3   | 0.3   | 0.3       | Rebuilt ALU from transistors upward    |
 
 Breaking changes are documented in the release notes.
-
-## Where to go next
-
-- The [tutorial](docs/tutorial.md) teaches you to write programs.
-- The [concepts](docs/concepts.md) explains how the machine works.
-- The [reference](docs/reference.md) defines every opcode and rule in a succinct manner.
-- The `src/cpu/` directory is the source of truth.

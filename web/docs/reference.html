@@ -1,0 +1,323 @@
+<!doctype html>
+<html lang="en" data-sz-theme="parchment">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>OXNTAL — Reference</title>
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap" rel="stylesheet">
+
+    <link rel="stylesheet" href="https://king525dev.github.io/silicon-zen/library/sz.css" />
+    <link rel="stylesheet" href="retro-sz.css" />
+</head>
+<body class="retro-sz sz-reset sz-body">
+
+<div class="retro-window">
+
+    <header class="retro-titlebar">
+        <span class="logo">OXNTAL</span>
+        <span class="logo-sub">Reference — Every opcode and rule</span>
+    </header>
+
+    <nav class="retro-toolbar">
+        <a class="retro-btn" href="docs.html" data-page="docs.html">&#9776; Index</a>
+        <a class="retro-btn" href="tutorial.html" data-page="tutorial.html">&#9654; Tutorial</a>
+        <a class="retro-btn" href="reference.html" data-page="reference.html">&#9632; Reference</a>
+        <a class="retro-btn" href="concepts.html" data-page="concepts.html">&#9881; Concepts</a>
+        <span class="tb-sep"></span>
+        <a class="retro-btn" href="../oxntal.html">&#8962; IDE</a>
+    </nav>
+
+    <main class="retro-content">
+        <div class="sz-container">
+
+            <div class="sz-mb-8">
+                <span class="sz-label">OXN — Reference</span>
+                <h1 class="sz-h1" style="margin:8px 0;">Reference</h1>
+                <p class="sz-lead">
+                    This is a lookup document. It assumes you already know what you want.
+                </p>
+            </div>
+
+            <!-- 1. Quick facts -->
+            <section class="sz-mb-8">
+                <span class="sz-label">1. Quick facts</span>
+                <div class="sz-cli sz-mt-4">
+                    <div class="sz-cli__inner">
+                        Architecture&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;8-bit stack machine<br>
+                        Value range&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;0 – 255<br>
+                        Stack&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;256 bytes, LIFO<br>
+                        RAM&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;256 bytes<br>
+                        Program&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;up to 256 bytes<br>
+                        Instructions&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;40<br>
+                        Instruction size&nbsp;&nbsp;&nbsp;&nbsp;1 or 2 bytes<br>
+                        Endianness&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;n/a (no multi-byte values)<br>
+                        Registers&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;PC and SP, both internal<br>
+                        Flags register&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;none (comparisons push a value)
+                    </div>
+                </div>
+            </section>
+
+            <hr class="sz-divider">
+
+            <!-- 2. Memory map -->
+            <section class="sz-mb-8">
+                <span class="sz-label">2. Memory map</span>
+                <div class="sz-cli sz-mt-4">
+                    <div class="sz-cli__inner">
+                        0x00&nbsp;&nbsp;┌────────────────────────┐<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;│&nbsp;&nbsp;RAM slot 0 (wildcard) │<br>
+                        0x01&nbsp;&nbsp;├────────────────────────┤<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;│&nbsp;&nbsp;Variables&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;│<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;│&nbsp;&nbsp;(VAR / @name)&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;│<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;│&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;│<br>
+                        0xFF&nbsp;&nbsp;└────────────────────────┘
+                    </div>
+                </div>
+                <p class="sz-body-text sz-mt-4">
+                    The stack is not memory-mapped. It lives inside the CPU as a separate 256-byte array.
+                </p>
+                <p class="sz-body-text sz-mt-2">
+                    Program memory is also separate. The CPU reads bytecode from its own
+                    <code class="sz-code">program</code> array, indexed by the program counter.
+                </p>
+                <p class="sz-body-text sz-mt-2">
+                    Address 0 in RAM is special: <code class="sz-code">STA 0</code> stores into the next free slot,
+                    and <code class="sz-code">LDR 0</code> reads back the value most recently stored that way.
+                </p>
+            </section>
+
+            <hr class="sz-divider">
+
+            <!-- 3. Opcode table -->
+            <section class="sz-mb-8">
+                <span class="sz-label">3. Opcode table</span>
+                <table class="sz-table sz-mt-4">
+                    <thead>
+                        <tr>
+                            <th>Opcode</th>
+                            <th>Mnemonic</th>
+                            <th>Bytes</th>
+                            <th>Effect</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr><td><code class="sz-code">0x01</code></td><td>LDA</td><td>2</td><td>Push the next byte.</td></tr>
+                        <tr><td><code class="sz-code">0x02</code></td><td>DCD</td><td>1</td><td>Pop, print as ASCII char.</td></tr>
+                        <tr><td><code class="sz-code">0x03</code></td><td>POP</td><td>1</td><td>Discard top.</td></tr>
+                        <tr><td><code class="sz-code">0x04</code></td><td>NIP</td><td>1</td><td>Discard second.</td></tr>
+                        <tr><td><code class="sz-code">0x05</code></td><td>SWP</td><td>1</td><td>Swap top two.</td></tr>
+                        <tr><td><code class="sz-code">0x06</code></td><td>DUP</td><td>1</td><td>Duplicate top.</td></tr>
+                        <tr><td><code class="sz-code">0x07</code></td><td>OVR</td><td>1</td><td>Copy second onto top.</td></tr>
+                        <tr><td><code class="sz-code">0x08</code></td><td>ROT</td><td>1</td><td>Rotate top three.</td></tr>
+                        <tr><td><code class="sz-code">0x09</code></td><td>CLR</td><td>1</td><td>Clear the stack.</td></tr>
+                        <tr><td><code class="sz-code">0x0A</code></td><td>ADD</td><td>1</td><td>a + b.</td></tr>
+                        <tr><td><code class="sz-code">0x0B</code></td><td>SUB</td><td>1</td><td>b − a.</td></tr>
+                        <tr><td><code class="sz-code">0x0C</code></td><td>MUL</td><td>1</td><td>a × b.</td></tr>
+                        <tr><td><code class="sz-code">0x0D</code></td><td>DIV</td><td>1</td><td>b ÷ a (integer).</td></tr>
+                        <tr><td><code class="sz-code">0x0E</code></td><td>MOD</td><td>1</td><td>b mod a.</td></tr>
+                        <tr><td><code class="sz-code">0x0F</code></td><td>AND</td><td>1</td><td>a &amp; b.</td></tr>
+                        <tr><td><code class="sz-code">0x10</code></td><td>ORA</td><td>1</td><td>a | b.</td></tr>
+                        <tr><td><code class="sz-code">0x11</code></td><td>EOR</td><td>1</td><td>a ^ b.</td></tr>
+                        <tr><td><code class="sz-code">0x12</code></td><td>NOT</td><td>1</td><td>~a.</td></tr>
+                        <tr><td><code class="sz-code">0x13</code></td><td>INC</td><td>1</td><td>a + 1.</td></tr>
+                        <tr><td><code class="sz-code">0x14</code></td><td>DEC</td><td>1</td><td>a − 1.</td></tr>
+                        <tr><td><code class="sz-code">0x15</code></td><td>SHL</td><td>1</td><td>b &lt;&lt; a.</td></tr>
+                        <tr><td><code class="sz-code">0x16</code></td><td>SHR</td><td>1</td><td>b &gt;&gt; a.</td></tr>
+                        <tr><td><code class="sz-code">0x17</code></td><td>NEG</td><td>1</td><td>−a.</td></tr>
+                        <tr><td><code class="sz-code">0x18</code></td><td>OUT</td><td>1</td><td>Pop, print as number.</td></tr>
+                        <tr><td><code class="sz-code">0x19</code></td><td>LOG</td><td>1</td><td>Print the whole stack.</td></tr>
+                        <tr><td><code class="sz-code">0x1A</code></td><td>PRT</td><td>1</td><td>Draw the whole stack.</td></tr>
+                        <tr><td><code class="sz-code">0x1B</code></td><td>SHW</td><td>1</td><td>Draw the top value.</td></tr>
+                        <tr><td><code class="sz-code">0x1C</code></td><td>STA</td><td>2</td><td>Pop, store at RAM address.</td></tr>
+                        <tr><td><code class="sz-code">0x1D</code></td><td>LDR</td><td>2</td><td>Load from RAM address.</td></tr>
+                        <tr><td><code class="sz-code">0x1E</code></td><td>JMP</td><td>2</td><td>Unconditional jump.</td></tr>
+                        <tr><td><code class="sz-code">0x1F</code></td><td>JCN</td><td>2</td><td>Conditional jump.</td></tr>
+                        <tr><td><code class="sz-code">0x20</code></td><td>ECD</td><td>2</td><td>Push a character code.</td></tr>
+                        <tr><td><code class="sz-code">0x21</code></td><td>EQU</td><td>1</td><td>Push 1 if a == b, else 0.</td></tr>
+                        <tr><td><code class="sz-code">0x22</code></td><td>GTH</td><td>1</td><td>Push 1 if b &gt; a, else 0.</td></tr>
+                        <tr><td><code class="sz-code">0x23</code></td><td>LTH</td><td>1</td><td>Push 1 if b &lt; a, else 0.</td></tr>
+                        <tr><td><code class="sz-code">0x24</code></td><td>VAR</td><td>0</td><td>Declare a variable.</td></tr>
+                        <tr><td><code class="sz-code">0xFF</code></td><td>BRK</td><td>1</td><td>Halt.</td></tr>
+                    </tbody>
+                </table>
+                <p class="sz-body-text sz-mt-2" style="font-size:12px; color:var(--sz-text-dim);">
+                    <code class="sz-code">VAR</code> produces no bytecode. It's resolved entirely at assembly time.
+                </p>
+            </section>
+
+            <hr class="sz-divider">
+
+            <!-- 4. Syntax -->
+            <section class="sz-mb-8">
+                <span class="sz-label">4. OXNTAL syntax</span>
+
+                <h3 class="sz-h3 sz-mt-4">Numbers</h3>
+                <table class="sz-table">
+                    <thead><tr><th>Form</th><th>Example</th><th>Value</th></tr></thead>
+                    <tbody>
+                        <tr><td>Decimal</td><td><code class="sz-code">10</code></td><td>10</td></tr>
+                        <tr><td>Hex</td><td><code class="sz-code">0x0A</code></td><td>10</td></tr>
+                        <tr><td>Binary</td><td><code class="sz-code">0b1010</code></td><td>10</td></tr>
+                    </tbody>
+                </table>
+                <p class="sz-body-text sz-mt-2" style="font-size:12px;">
+                    The <code class="sz-code">0x</code> and <code class="sz-code">0b</code> prefixes are required.
+                    Values are truncated to 8 bits when emitted. <code class="sz-code">LDA 300</code> pushes <code class="sz-code">44</code>.
+                </p>
+
+                <h3 class="sz-h3 sz-mt-6">Comments</h3>
+                <p class="sz-body-text">
+                    Delimited by two <code class="sz-code">//</code> markers.
+                    Everything between the first and the second is discarded.
+                </p>
+                <div class="sz-cli sz-mt-2">
+                    <div class="sz-cli__inner">// this is a comment //<br>LDA 5</div>
+                </div>
+                <p class="sz-body-text sz-mt-2" style="font-size:12px;">
+                    An odd number of <code class="sz-code">//</code> markers is an error.
+                </p>
+
+                <h3 class="sz-h3 sz-mt-6">Labels</h3>
+                <div class="sz-cli sz-mt-2">
+                    <div class="sz-cli__inner">&gt;loop<br>JMP loop</div>
+                </div>
+                <p class="sz-body-text sz-mt-2" style="font-size:12px;">
+                    <code class="sz-code">&gt;name</code> declares a label at the current bytecode position.
+                    <code class="sz-code">name</code> alone references it.
+                </p>
+
+                <h3 class="sz-h3 sz-mt-6">Variables</h3>
+                <div class="sz-cli sz-mt-2">
+                    <div class="sz-cli__inner">
+                        VAR counter<br>@counter&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;; equivalent<br>STA counter<br>LDR counter
+                    </div>
+                </div>
+                <p class="sz-body-text sz-mt-2" style="font-size:12px;">
+                    Both forms allocate the next free RAM address.
+                    Address allocation starts at 1, since 0 is reserved by <code class="sz-code">STA</code>/<code class="sz-code">LDR</code>.
+                </p>
+
+                <h3 class="sz-h3 sz-mt-6">Shorthands</h3>
+                <table class="sz-table">
+                    <thead><tr><th>Form</th><th>Expands to</th></tr></thead>
+                    <tbody>
+                        <tr><td><code class="sz-code">LDA " 1 2 3 "</code></td><td><code class="sz-code">LDA 1 LDA 2 LDA 3</code></td></tr>
+                        <tr><td><code class="sz-code">DUP * 4</code></td><td><code class="sz-code">DUP DUP DUP DUP</code></td></tr>
+                        <tr><td><code class="sz-code">#5</code></td><td><code class="sz-code">LDA 5</code></td></tr>
+                        <tr><td><code class="sz-code">x++</code></td><td><code class="sz-code">LDR x INC STA x</code></td></tr>
+                    </tbody>
+                </table>
+            </section>
+
+            <hr class="sz-divider">
+
+            <!-- 5. CLI -->
+            <section class="sz-mb-8">
+                <span class="sz-label">5. CLI</span>
+                <div class="sz-cli sz-mt-4">
+                    <div class="sz-cli__inner">
+                        oxn &lt;program.oxn&gt;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;assemble and run<br>
+                        oxn run &lt;program.oxn&gt;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;same, explicit verb<br>
+                        oxn --help&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;show usage
+                    </div>
+                </div>
+                <table class="sz-table sz-mt-4">
+                    <thead><tr><th>Flag</th><th>Effect</th></tr></thead>
+                    <tbody>
+                        <tr><td><code class="sz-code">--no-display</code></td><td>Disable <code class="sz-code">SHW</code> and <code class="sz-code">PRT</code> output</td></tr>
+                        <tr><td><code class="sz-code">--log &lt;path&gt;</code></td><td>Write the debug log to <code class="sz-code">&lt;path&gt;</code> (default: <code class="sz-code">mycpu.log</code>)</td></tr>
+                        <tr><td><code class="sz-code">--log -</code></td><td>Write the log to stderr</td></tr>
+                        <tr><td><code class="sz-code">--trace</code></td><td>Alias for <code class="sz-code">--log -</code></td></tr>
+                        <tr><td><code class="sz-code">--no-log</code></td><td>Disable logging entirely</td></tr>
+                        <tr><td><code class="sz-code">--verbose</code></td><td>Per-step trace to stderr</td></tr>
+                        <tr><td><code class="sz-code">-h, --help</code></td><td>Show usage</td></tr>
+                    </tbody>
+                </table>
+                <p class="sz-body-text sz-mt-4">
+                    <strong><code class="sz-code">--verbose</code> format:</strong>
+                    One line per instruction, written to stderr.
+                </p>
+                <div class="sz-cli sz-mt-2">
+                    <div class="sz-cli__inner">[pc=0004 sp=&nbsp;&nbsp;2 op=0x1d] stack=[10 33]</div>
+                </div>
+                <ul style="font-size:13px; color:var(--sz-text-dim); line-height:1.9; margin-top:8px;">
+                    <li><code class="sz-code">pc</code> — program counter before this instruction</li>
+                    <li><code class="sz-code">sp</code> — stack pointer before this instruction</li>
+                    <li><code class="sz-code">op</code> — opcode</li>
+                    <li><code class="sz-code">stack</code> — full stack contents before this instruction</li>
+                </ul>
+            </section>
+
+            <hr class="sz-divider">
+
+            <!-- 6. Exit codes -->
+            <section class="sz-mb-8">
+                <span class="sz-label">6. Exit codes</span>
+                <table class="sz-table sz-mt-4">
+                    <thead><tr><th>Code</th><th>Meaning</th></tr></thead>
+                    <tbody>
+                        <tr><td><code class="sz-code">0</code></td><td>Success</td></tr>
+                        <tr><td><code class="sz-code">1</code></td><td>Bad usage</td></tr>
+                        <tr><td><code class="sz-code">2</code></td><td>File could not be read</td></tr>
+                        <tr><td><code class="sz-code">3</code></td><td>Assembly error</td></tr>
+                        <tr><td><code class="sz-code">4</code></td><td>Runtime error</td></tr>
+                    </tbody>
+                </table>
+            </section>
+
+            <hr class="sz-divider">
+
+            <!-- 7. What OXN does not have -->
+            <section class="sz-mb-8">
+                <span class="sz-label">7. What OXN does not have</span>
+                <p class="sz-body-text">Documented explicitly so you know what not to look for.</p>
+                <div class="sz-cli sz-mt-4">
+                    <div class="sz-cli__inner">
+                        No registers&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;No user-visible GPRs. Everything is on the stack or in RAM.<br><br>
+                        No flags register&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Comparisons push a value, they don't set flags. To branch, use JCN.<br><br>
+                        No addressing modes&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Only immediate (LDA) and absolute (STA, LDR, JMP, JCN).<br><br>
+                        No functions&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;No CALL, no RET. Subroutines are by convention.<br><br>
+                        No interrupts&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;The CPU runs from load to BRK.<br><br>
+                        No floating point&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Integers only, unsigned, 0–255.<br><br>
+                        No signed integers&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;SUB and NEG wrap. There is no notion of negative in the ISA.<br><br>
+                        No assembler directives&nbsp;No .org, .db, .equ, no sections.<br><br>
+                        No expressions&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Parameters are single numbers, labels, or variables.<br><br>
+                        No macros&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Beyond the four shorthands.<br><br>
+                        No linker&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;A program is one file.
+                    </div>
+                </div>
+            </section>
+
+            <hr class="sz-divider">
+
+            <!-- Footer -->
+            <section class="sz-mb-8">
+                <div class="sz-flex" style="gap:8px;">
+                    <a class="retro-btn" href="tutorial.html">&#9654; Tutorial</a>
+                    <a class="retro-btn" href="concepts.html">&#9881; Concepts</a>
+                    <a class="retro-btn" href="../oxntal.html">&#8962; Back to IDE</a>
+                </div>
+            </section>
+
+        </div>
+
+        <div class="sz-mt-8">
+            View Page on <a href="https://github.com/king525dev/ts-cpu/blob/main/docs/reference.md">Github</a>
+        </div>
+    </main>
+
+    <footer class="retro-statusbar">
+        <span class="status-cell">Reference</span>
+        <span class="status-cell grow"></span>
+        <span class="status-cell">40 opcodes &middot; 7 sections</span>
+    </footer>
+
+</div>
+
+<script src="https://king525dev.github.io/silicon-zen/library/sz.js"></script>
+<script src="retro-sz.js"></script>
+</body>
+</html>

@@ -1,0 +1,170 @@
+<!doctype html>
+<html lang="en" data-sz-theme="parchment">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>OXNTAL — Documentation</title>
+
+    <!-- Pixel font for branding -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap" rel="stylesheet">
+
+    <!-- Silicon Zen -->
+    <link rel="stylesheet" href="https://king525dev.github.io/silicon-zen/library/sz.css" />
+    <!-- Retro chrome -->
+    <link rel="stylesheet" href="retro-sz.css" />
+</head>
+<body class="retro-sz sz-reset sz-body">
+
+<div class="retro-window">
+
+    <!-- ═══ TITLE BAR ═══ -->
+    <header class="retro-titlebar">
+        <span class="logo">OXNTAL</span>
+        <span class="logo-sub">Documentation Index</span>
+    </header>
+
+    <!-- ═══ TOOLBAR ═══ -->
+    <nav class="retro-toolbar">
+        <a class="retro-btn" href="docs.html" data-page="docs.html">&#9776; Index</a>
+        <a class="retro-btn" href="tutorial.html" data-page="tutorial.html">&#9654; Tutorial</a>
+        <a class="retro-btn" href="reference.html" data-page="reference.html">&#9632; Reference</a>
+        <a class="retro-btn" href="concepts.html" data-page="concepts.html">&#9881; Concepts</a>
+        <span class="tb-sep"></span>
+        <a class="retro-btn" href="../oxntal.html">&#8962; IDE</a>
+    </nav>
+
+    <!-- ═══ CONTENT ═══ -->
+    <main class="retro-content">
+        <div class="sz-container">
+
+            <!-- Hero -->
+            <div class="sz-mb-8">
+                <span class="sz-label">OXN — Documentation</span>
+                <h1 class="sz-pixel--hero" style="margin:8px 0;">OXNTAL DOCS</h1>
+                <p class="sz-body-text">
+                    A stack machine, and the assembler that feeds it.
+                    Everything you need to write, understand, and extend OXN.
+                </p>
+            </div>
+
+            <!-- Cards -->
+            <div class="sz-grid-2">
+
+                <a class="sz-card sz-card--hover" href="tutorial.html" style="text-decoration:none;">
+                    <div class="sz-card__header">
+                        <span class="sz-card__title">&#9654; TUTORIAL</span>
+                        <div class="sz-card__dots">
+                            <span class="sz-card__dot sz-card__dot--g"></span>
+                            <span class="sz-card__dot sz-card__dot--b"></span>
+                        </div>
+                    </div>
+                    <div class="sz-card__body">
+                        <h3 class="sz-h3">Write your first program</h3>
+                        <p style="font-size:13px; color:var(--sz-text-dim); margin:8px 0 0;">
+                            Install, run <code class="sz-code">LDA 42 / OUT / BRK</code>,
+                            and learn the stack from scratch. No assembly experience required.
+                        </p>
+                    </div>
+                </a>
+
+                <a class="sz-card sz-card--hover" href="reference.html" style="text-decoration:none;">
+                    <div class="sz-card__header">
+                        <span class="sz-card__title">&#9632; REFERENCE</span>
+                        <div class="sz-card__dots">
+                            <span class="sz-card__dot sz-card__dot--r"></span>
+                            <span class="sz-card__dot sz-card__dot--g"></span>
+                            <span class="sz-card__dot sz-card__dot--b"></span>
+                        </div>
+                    </div>
+                    <div class="sz-card__body">
+                        <h3 class="sz-h3">Every opcode and rule</h3>
+                        <p style="font-size:13px; color:var(--sz-text-dim); margin:8px 0 0;">
+                            40 instructions, syntax rules, CLI flags, error codes,
+                            and the full opcode table. The lookup document.
+                        </p>
+                    </div>
+                </a>
+
+                <a class="sz-card sz-card--hover" href="concepts.html" style="text-decoration:none;">
+                    <div class="sz-card__header">
+                        <span class="sz-card__title">&#9881; CONCEPTS</span>
+                        <div class="sz-card__dots">
+                            <span class="sz-card__dot sz-card__dot--b"></span>
+                            <span class="sz-card__dot sz-card__dot--r"></span>
+                        </div>
+                    </div>
+                    <div class="sz-card__body">
+                        <h3 class="sz-h3">How the machine works</h3>
+                        <p style="font-size:13px; color:var(--sz-text-dim); margin:8px 0 0;">
+                            From transistors to NAND gates to the ALU to the CPU.
+                            The seven layers, and why each one exists.
+                        </p>
+                    </div>
+                </a>
+
+                <div class="sz-card">
+                    <div class="sz-card__header">
+                        <span class="sz-card__title">&#8962; IDE</span>
+                        <div class="sz-card__dots">
+                            <span class="sz-card__dot sz-card__dot--g"></span>
+                        </div>
+                    </div>
+                    <div class="sz-card__body">
+                        <h3 class="sz-h3">Back to the editor</h3>
+                        <p style="font-size:13px; color:var(--sz-text-dim); margin:8px 0 0;">
+                            Return to the Oxntal Web IDE to write, run,
+                            and debug your programs.
+                        </p>
+                    </div>
+                </div>
+
+            </div>
+
+            <!-- Quick start -->
+            <div class="sz-callout sz-mt-8">
+                <strong>Quick start:</strong>
+                Clone the repository, run <code class="sz-code">npm install</code>,
+                then <code class="sz-code">npx tsx src/cli/index.ts first.oxn</code>.
+                The <a href="tutorial.html" style="color:var(--sz-teal);">tutorial</a> walks you through every step.
+            </div>
+
+            <div class="sz-mt-8">
+                View Page on <a href="https://github.com/king525dev/ts-cpu/blob/main/README.md">Github</a>
+            </div>
+            <!-- Version info -->
+            <div class="sz-flex sz-flex--between sz-mt-8" style="align-items:center;">
+                <span class="sz-label" style="margin:0;">OXN v0.3</span>
+                <span style="font-family:var(--sz-font-mono); font-size:11px; color:var(--sz-text-dim);">
+                    ISA 0.3 &middot; CPU 0.3 &middot; Assembler 0.3
+                </span>
+            </div>
+
+        </div>
+    </main>
+
+    <!-- ═══ STATUS BAR ═══ -->
+    <footer class="retro-statusbar">
+        <span class="status-cell">4 documents</span>
+        <span class="status-cell grow"></span>
+        <span class="status-cell" id="statusTime">OXN Documentation</span>
+    </footer>
+
+</div>
+
+<!-- Silicon Zen JS -->
+<script src="https://king525dev.github.io/silicon-zen/library/sz.js"></script>
+<!-- Shared retro behaviour -->
+<script src="retro-sz.js"></script>
+<script>
+    (function () {
+        var t = document.getElementById('statusTime');
+        if (t) {
+            var now = new Date();
+            t.textContent = 'Last opened ' + now.toLocaleTimeString([], {hour:'2-digit',minute:'2-digit'});
+        }
+    })();
+</script>
+</body>
+</html>

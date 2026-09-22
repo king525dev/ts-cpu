@@ -1,0 +1,617 @@
+<!doctype html>
+<html lang="en" data-sz-theme="parchment">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>OXNTAL — Tutorial</title>
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap" rel="stylesheet">
+
+    <link rel="stylesheet" href="https://king525dev.github.io/silicon-zen/library/sz.css" />
+    <link rel="stylesheet" href="retro-sz.css" />
+</head>
+<body class="retro-sz sz-reset sz-body">
+
+<div class="retro-window">
+
+    <header class="retro-titlebar">
+        <span class="logo">OXNTAL</span>
+        <span class="logo-sub">Tutorial — Write your first program</span>
+    </header>
+
+    <nav class="retro-toolbar">
+        <a class="retro-btn" href="docs.html" data-page="docs.html">&#9776; Index</a>
+        <a class="retro-btn" href="tutorial.html" data-page="tutorial.html">&#9654; Tutorial</a>
+        <a class="retro-btn" href="reference.html" data-page="reference.html">&#9632; Reference</a>
+        <a class="retro-btn" href="concepts.html" data-page="concepts.html">&#9881; Concepts</a>
+        <span class="tb-sep"></span>
+        <a class="retro-btn" href="../oxntal.html">&#8962; IDE</a>
+    </nav>
+
+    <main class="retro-content">
+        <div class="sz-container">
+
+            <!-- Header -->
+            <div class="sz-mb-8">
+                <span class="sz-label">OXN — Tutorial</span>
+                <h1 class="sz-h1" style="margin:8px 0;">Write your first program</h1>
+                <p class="sz-lead">
+                    Nothing here assumes you have written assembly before.
+                    Nothing assumes you know what a stack is.
+                    If you can open a terminal and type a command, you have everything you need.
+                </p>
+            </div>
+
+            <!-- Callout: prerequisites -->
+            <div class="sz-callout sz-callout--info sz-mb-8">
+                <strong>You are here because:</strong> you want to write and run your first program.
+                <br>
+                <strong>You may also want:</strong>
+                <a href="concepts.html" style="color:var(--sz-teal);">the concepts</a> — how the machine works —
+                or <a href="reference.html" style="color:var(--sz-teal);">the reference</a> — every opcode and rule.
+            </div>
+
+            <!-- 1. Install -->
+            <section class="sz-mb-8">
+                <span class="sz-label">1. Install</span>
+                <p class="sz-body-text">
+                    You need Node.js 20 or later. Everything else comes from <code class="sz-code">npm</code>.
+                </p>
+                <div class="sz-cli sz-mt-4">
+                    <div class="sz-cli__inner">
+                        <span class="sz-prompt">$</span> git clone https://github.com/king525dev/ts-cpu<br>
+                        <span class="sz-prompt">$</span> cd ts-cpu<br>
+                        <span class="sz-prompt">$</span> npm install<br>
+                        <span class="sz-prompt">$</span> npm run build<span class="sz-cli__cursor"></span>
+                    </div>
+                </div>
+                <p class="sz-body-text sz-mt-4">
+                    You now have a working OXN machine. There are three ways to use it:
+                </p>
+                <ul style="font-size:13px; color:var(--sz-text-dim); line-height:1.8;">
+                    <li>From a terminal — what this tutorial covers.</li>
+                    <li>In a browser — open <code class="sz-code">src/web/demo.html</code>.</li>
+                    <li>As a desktop app — once you've built the installer.</li>
+                </ul>
+            </section>
+
+            <hr class="sz-divider">
+
+            <!-- 2. First program -->
+            <section class="sz-mb-8">
+                <span class="sz-label">2. The first program</span>
+                <p class="sz-body-text">
+                    Create a file called <code class="sz-code">first.oxn</code> and put three lines in it:
+                </p>
+                <div class="sz-cli sz-mt-4">
+                    <div class="sz-cli__inner">
+                        LDA 42<br>OUT<br>BRK
+                    </div>
+                </div>
+                <p class="sz-body-text sz-mt-4">Run it:</p>
+                <div class="sz-cli sz-mt-2">
+                    <div class="sz-cli__inner">
+                        <span class="sz-prompt">$</span> npx tsx src/cli/index.ts first.oxn
+                    </div>
+                </div>
+                <p class="sz-body-text sz-mt-4">You should see:</p>
+                <div class="sz-cli sz-mt-2">
+                    <div class="sz-cli__inner sz-ok">42</div>
+                </div>
+                <p class="sz-body-text sz-mt-4">
+                    That is a complete program. Three instructions, one result.
+                    Let's take each line apart.
+                </p>
+            </section>
+
+            <hr class="sz-divider">
+
+            <!-- 3. What a stack is -->
+            <section class="sz-mb-8">
+                <span class="sz-label">3. What a stack is</span>
+                <p class="sz-body-text">
+                    Before the three lines make sense, you need one mental image: a stack of plates.
+                </p>
+                <div class="sz-cli sz-mt-4">
+                    <div class="sz-cli__inner">
+                        &nbsp;&nbsp;&nbsp;&nbsp;┌──────────┐<br>
+                        &nbsp;&nbsp;top&nbsp;&nbsp;│&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;│&nbsp;&nbsp;← the only place you can add or remove<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;├──────────┤<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;│&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;│<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;├──────────┤<br>
+                        &nbsp;bottom│&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;│<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;└──────────┘
+                    </div>
+                </div>
+                <p class="sz-body-text sz-mt-4">
+                    The OXN stack holds numbers, not plates. Up to 256 of them.
+                    When you push a number, it goes on top. When you pop, the top number comes off.
+                </p>
+                <p class="sz-body-text sz-mt-2">
+                    Every instruction in OXN either pushes something, pops something,
+                    or does something with what's already there.
+                </p>
+            </section>
+
+            <hr class="sz-divider">
+
+            <!-- 4. LDA 42 -->
+            <section class="sz-mb-8">
+                <span class="sz-label">4. LDA 42</span>
+                <p class="sz-body-text">
+                    <code class="sz-code">LDA</code> pushes a number onto the stack.
+                    <code class="sz-code">LDA 42</code> pushes <code class="sz-code">42</code>.
+                </p>
+                <div class="sz-cli sz-mt-4">
+                    <div class="sz-cli__inner">
+                        before:&nbsp;&nbsp;&nbsp;[ ]<br>
+                        after:&nbsp;&nbsp;&nbsp;&nbsp;[ 42 ]
+                    </div>
+                </div>
+            </section>
+
+            <hr class="sz-divider">
+
+            <!-- 5. OUT -->
+            <section class="sz-mb-8">
+                <span class="sz-label">5. OUT</span>
+                <p class="sz-body-text">
+                    <code class="sz-code">OUT</code> pops the top number and prints it.
+                </p>
+                <div class="sz-cli sz-mt-4">
+                    <div class="sz-cli__inner">
+                        before:&nbsp;&nbsp;&nbsp;[ 42 ]<br>
+                        after:&nbsp;&nbsp;&nbsp;&nbsp;[ ]<br>
+                        output:&nbsp;&nbsp;42
+                    </div>
+                </div>
+            </section>
+
+            <hr class="sz-divider">
+
+            <!-- 6. BRK -->
+            <section class="sz-mb-8">
+                <span class="sz-label">6. BRK</span>
+                <p class="sz-body-text">
+                    <code class="sz-code">BRK</code> stops the CPU. Without it, the CPU would read past
+                    the end of your program into whatever comes next in memory, which is not what you want.
+                </p>
+                <div class="sz-callout sz-callout--warn sz-mt-4">
+                    <strong>End every program with BRK.</strong>
+                </div>
+            </section>
+
+            <hr class="sz-divider">
+
+            <!-- 7. Watching the machine work -->
+            <section class="sz-mb-8">
+                <span class="sz-label">7. Watching the machine work</span>
+                <p class="sz-body-text">
+                    Type the same three lines again but run them with <code class="sz-code">--verbose</code>:
+                </p>
+                <div class="sz-cli sz-mt-4">
+                    <div class="sz-cli__inner">
+                        <span class="sz-prompt">$</span> npx tsx src/cli/index.ts first.oxn --verbose
+                    </div>
+                </div>
+                <p class="sz-body-text sz-mt-4">
+                    You'll see two streams of output. The <code class="sz-code">42</code> still goes to your terminal
+                    as before. But now there's a second set of lines, one per instruction, on stderr:
+                </p>
+                <div class="sz-cli sz-mt-2">
+                    <div class="sz-cli__inner">
+                        [pc=0000 sp=&nbsp;&nbsp;0 op=0x01] stack=[]<br>
+                        [pc=0002 sp=&nbsp;&nbsp;1 op=0x18] stack=[42]<br>
+                        [pc=0003 sp=&nbsp;&nbsp;0 op=0xff] stack=[]
+                    </div>
+                </div>
+                <p class="sz-body-text sz-mt-4">Read each line left to right:</p>
+                <ul style="font-size:13px; color:var(--sz-text-dim); line-height:1.9;">
+                    <li><code class="sz-code">pc=0000</code> — the program counter, the byte we're about to execute.</li>
+                    <li><code class="sz-code">sp=&nbsp;&nbsp;0</code> — the stack pointer, how many things are on the stack.</li>
+                    <li><code class="sz-code">op=0x01</code> — the opcode, <code class="sz-code">0x01</code> is <code class="sz-code">LDA</code>.</li>
+                    <li><code class="sz-code">stack=[]</code> — what's on the stack before this instruction runs.</li>
+                </ul>
+                <div class="sz-callout sz-callout--info sz-mt-4">
+                    This is the single most useful debugging tool in the whole machine.
+                    When a program misbehaves, run it with <code class="sz-code">--verbose</code> and watch.
+                </div>
+            </section>
+
+            <hr class="sz-divider">
+
+            <!-- 8. Arithmetic -->
+            <section class="sz-mb-8">
+                <span class="sz-label">8. Arithmetic</span>
+                <p class="sz-body-text">Try this:</p>
+                <div class="sz-cli sz-mt-4">
+                    <div class="sz-cli__inner">
+                        LDA 10<br>LDA 20<br>ADD<br>OUT<br>BRK
+                    </div>
+                </div>
+                <p class="sz-body-text sz-mt-4">Output: <code class="sz-code">30</code></p>
+                <p class="sz-body-text sz-mt-2">
+                    <code class="sz-code">ADD</code> pops the top two numbers, adds them, and pushes the result.
+                </p>
+                <div class="sz-cli sz-mt-4">
+                    <div class="sz-cli__inner">
+                        before ADD:&nbsp;&nbsp;&nbsp;[ 10 20 ]<br>
+                        after ADD:&nbsp;&nbsp;&nbsp;&nbsp;[ 30 ]
+                    </div>
+                </div>
+                <p class="sz-body-text sz-mt-4">
+                    Notice the order. <code class="sz-code">LDA 10</code> pushes first,
+                    <code class="sz-code">LDA 20</code> pushes second, so <code class="sz-code">20</code> is on top.
+                    <code class="sz-code">ADD</code> doesn't care about top vs bottom — it adds the two values it can see.
+                </p>
+                <table class="sz-table sz-mt-6">
+                    <thead>
+                        <tr><th>Instruction</th><th>What it computes</th></tr>
+                    </thead>
+                    <tbody>
+                        <tr><td><code class="sz-code">ADD</code></td><td>a + b</td></tr>
+                        <tr><td><code class="sz-code">SUB</code></td><td>b − a</td></tr>
+                        <tr><td><code class="sz-code">MUL</code></td><td>a × b</td></tr>
+                        <tr><td><code class="sz-code">DIV</code></td><td>b ÷ a (integer)</td></tr>
+                        <tr><td><code class="sz-code">MOD</code></td><td>b mod a (the remainder)</td></tr>
+                    </tbody>
+                </table>
+                <p class="sz-body-text sz-mt-4">
+                    For <code class="sz-code">SUB</code>, <code class="sz-code">DIV</code>, and <code class="sz-code">MOD</code>
+                    the order matters. In every case the second value you pushed is the one on the left.
+                </p>
+                <div class="sz-cli sz-mt-4">
+                    <div class="sz-cli__inner">
+                        LDA 10<br>LDA 20<br>SUB<br>OUT<br>BRK
+                    </div>
+                </div>
+                <p class="sz-body-text sz-mt-2">
+                    Output: <code class="sz-code">10</code>. Because it computes <code class="sz-code">20 − 10</code>,
+                    not <code class="sz-code">10 − 20</code>.
+                </p>
+            </section>
+
+            <hr class="sz-divider">
+
+            <!-- 9. Printing characters -->
+            <section class="sz-mb-8">
+                <span class="sz-label">9. Printing characters</span>
+                <p class="sz-body-text">
+                    <code class="sz-code">OUT</code> prints a number.
+                    <code class="sz-code">DCD</code> prints an ASCII character instead.
+                </p>
+                <div class="sz-cli sz-mt-4">
+                    <div class="sz-cli__inner">
+                        LDA 72<br>DCD<br>LDA 105<br>DCD<br>LDA 33<br>DCD<br>BRK
+                    </div>
+                </div>
+                <p class="sz-body-text sz-mt-4">Output: <code class="sz-code">Hi!</code></p>
+                <p class="sz-body-text sz-mt-2">
+                    <code class="sz-code">72</code> is <code class="sz-code">H</code>,
+                    <code class="sz-code">105</code> is <code class="sz-code">i</code>,
+                    <code class="sz-code">33</code> is <code class="sz-code">!</code>.
+                    Uppercase <code class="sz-code">A</code> starts at 65. Lowercase <code class="sz-code">a</code> starts at 97.
+                </p>
+                <p class="sz-body-text sz-mt-2">
+                    <code class="sz-code">DCD</code> doesn't add a newline, so consecutive
+                    <code class="sz-code">DCD</code>s string together.
+                </p>
+            </section>
+
+            <hr class="sz-divider">
+
+            <!-- 10. Shorthand -->
+            <section class="sz-mb-8">
+                <span class="sz-label">10. A shorter way to write the same thing</span>
+                <p class="sz-body-text">
+                    Typing <code class="sz-code">LDA</code> over and over is tedious.
+                    OXNTAL has a shorthand: put the numbers in quotes and the assembler
+                    expands each one into its own <code class="sz-code">LDA</code>.
+                </p>
+                <div class="sz-cli sz-mt-4">
+                    <div class="sz-cli__inner">
+                        LDA " 72 105 33 "<br>DCD * 3<br>BRK
+                    </div>
+                </div>
+                <ul style="font-size:13px; color:var(--sz-text-dim); line-height:1.9;">
+                    <li><code class="sz-code">LDA " 72 105 33 "</code> expands to <code class="sz-code">LDA 72 LDA 105 LDA 33</code>.</li>
+                    <li><code class="sz-code">DCD * 3</code> means "do <code class="sz-code">DCD</code> three times".</li>
+                </ul>
+                <div class="sz-callout sz-callout--warn sz-mt-4">
+                    <strong>Watch out for the order.</strong> The stack is last-in-first-out,
+                    so the value you push last is the one <code class="sz-code">DCD</code> prints first.
+                    If you write <code class="sz-code">LDA " 33 105 72 "</code> and then
+                    <code class="sz-code">DCD * 3</code>, you get <code class="sz-code">Hi!</code>
+                    — because <code class="sz-code">72</code> is <code class="sz-code">H</code>
+                    and it comes off the top first.
+                </div>
+            </section>
+
+            <hr class="sz-divider">
+
+            <!-- 11. Variables -->
+            <section class="sz-mb-8">
+                <span class="sz-label">11. Variables</span>
+                <p class="sz-body-text">
+                    The stack is temporary. Numbers fall off it as fast as they go on.
+                    If you want to remember something across several instructions, you need a variable.
+                </p>
+                <p class="sz-body-text sz-mt-2">
+                    A variable is a small box in RAM that holds one number. You give it a name with
+                    <code class="sz-code">VAR</code>:
+                </p>
+                <div class="sz-cli sz-mt-4">
+                    <div class="sz-cli__inner">VAR counter</div>
+                </div>
+                <p class="sz-body-text sz-mt-2">
+                    That's a declaration. It produces no bytecode — it just tells the assembler
+                    "whenever I write <code class="sz-code">counter</code> later, substitute the address this variable was given."
+                </p>
+                <p class="sz-body-text sz-mt-2">
+                    Then <code class="sz-code">STA</code> and <code class="sz-code">LDR</code> read and write it.
+                </p>
+                <div class="sz-cli sz-mt-4">
+                    <div class="sz-cli__inner">
+                        VAR counter<br><br>
+                        LDA 5<br>STA counter<br><br>
+                        LDR counter<br>OUT<br>BRK
+                    </div>
+                </div>
+                <p class="sz-body-text sz-mt-2">Output: <code class="sz-code">5</code>.</p>
+                <p class="sz-body-text sz-mt-2">
+                    <code class="sz-code">STA counter</code> pops the top of the stack and stores it in the box.
+                    <code class="sz-code">LDR counter</code> pushes the contents of the box back onto the stack.
+                </p>
+            </section>
+
+            <hr class="sz-divider">
+
+            <!-- 12. Labels -->
+            <section class="sz-mb-8">
+                <span class="sz-label">12. Labels</span>
+                <p class="sz-body-text">A label is a name for a position in your program.</p>
+                <div class="sz-cli sz-mt-4">
+                    <div class="sz-cli__inner">&gt;loop</div>
+                </div>
+                <p class="sz-body-text sz-mt-2">
+                    The <code class="sz-code">&gt;</code> marks it as a label. <code class="sz-code">loop</code> is its name.
+                </p>
+                <p class="sz-body-text sz-mt-2">To jump to a label, use <code class="sz-code">JMP</code>:</p>
+                <div class="sz-cli sz-mt-4">
+                    <div class="sz-cli__inner">JMP loop</div>
+                </div>
+                <p class="sz-body-text sz-mt-2">
+                    That sets the program counter to wherever the label is.
+                    If <code class="sz-code">loop</code> is above the <code class="sz-code">JMP</code>,
+                    execution goes back. If it's below, execution goes forward.
+                </p>
+                <div class="sz-callout sz-callout--warn sz-mt-4">
+                    <strong>Don't run this:</strong>
+                    <div class="sz-cli sz-mt-2">
+                        <div class="sz-cli__inner">&gt;loop<br>JMP loop</div>
+                    </div>
+                    It jumps to itself forever. The CPU will run until you kill it with Ctrl-C.
+                    It's worth trying once, just to see.
+                </div>
+            </section>
+
+            <hr class="sz-divider">
+
+            <!-- 13. Conditional jumps -->
+            <section class="sz-mb-8">
+                <span class="sz-label">13. Conditional jumps</span>
+                <p class="sz-body-text">
+                    An infinite loop is easy. A controlled loop is more useful.
+                </p>
+                <p class="sz-body-text sz-mt-2">
+                    <code class="sz-code">JCN</code> is a conditional jump. It pops a value.
+                    If the value is non-zero, the jump happens. If it's zero, execution continues normally.
+                </p>
+                <p class="sz-body-text sz-mt-2">
+                    Pair <code class="sz-code">JCN</code> with a comparison to make a real loop.
+                    <code class="sz-code">GTH</code> pops two values and pushes <code class="sz-code">1</code>
+                    if the second is greater than the first, or <code class="sz-code">0</code> otherwise.
+                </p>
+                <p class="sz-body-text sz-mt-2">Here's a countdown from 5:</p>
+                <div class="sz-cli sz-mt-4">
+                    <div class="sz-cli__inner">
+                        VAR n<br><br>
+                        LDA 5<br>STA n<br><br>
+                        &gt;loop<br>
+                        &nbsp;&nbsp;LDR n<br>
+                        &nbsp;&nbsp;OUT<br><br>
+                        &nbsp;&nbsp;LDR n<br>
+                        &nbsp;&nbsp;DEC<br>
+                        &nbsp;&nbsp;STA n<br><br>
+                        &nbsp;&nbsp;LDR n<br>
+                        &nbsp;&nbsp;LDA 0<br>
+                        &nbsp;&nbsp;GTH<br>
+                        &nbsp;&nbsp;JCN loop<br><br>
+                        BRK
+                    </div>
+                </div>
+                <p class="sz-body-text sz-mt-4">Run it, and read it a line at a time:</p>
+                <ul style="font-size:13px; color:var(--sz-text-dim); line-height:1.9;">
+                    <li><code class="sz-code">LDR n</code> — push the current value of <code class="sz-code">n</code>.</li>
+                    <li><code class="sz-code">OUT</code> — print it.</li>
+                    <li><code class="sz-code">LDR n / DEC / STA n</code> — decrement <code class="sz-code">n</code> and store it back.</li>
+                    <li><code class="sz-code">LDR n / LDA 0 / GTH</code> — push <code class="sz-code">n</code>, push <code class="sz-code">0</code>, then <code class="sz-code">GTH</code> pushes <code class="sz-code">1</code> if <code class="sz-code">n &gt; 0</code>.</li>
+                    <li><code class="sz-code">JCN loop</code> — if the comparison pushed <code class="sz-code">1</code>, jump back to <code class="sz-code">loop</code>.</li>
+                </ul>
+                <p class="sz-body-text sz-mt-4">Output:</p>
+                <div class="sz-cli sz-mt-2">
+                    <div class="sz-cli__inner">5<br>4<br>3<br>2<br>1</div>
+                </div>
+                <p class="sz-body-text sz-mt-4">
+                    When <code class="sz-code">n</code> reaches <code class="sz-code">0</code>,
+                    <code class="sz-code">GTH</code> pushes <code class="sz-code">0</code>,
+                    <code class="sz-code">JCN</code> doesn't jump, and <code class="sz-code">BRK</code>
+                    stops the machine.
+                </p>
+            </section>
+
+            <hr class="sz-divider">
+
+            <!-- 14. Trace of a real loop -->
+            <section class="sz-mb-8">
+                <span class="sz-label">14. Reading the trace of a real loop</span>
+                <p class="sz-body-text">Run the countdown with <code class="sz-code">--verbose</code> and watch the stack:</p>
+                <div class="sz-cli sz-mt-4">
+                    <div class="sz-cli__inner">
+                        <span class="sz-prompt">$</span> npx tsx src/cli/index.ts countdown.oxn --verbose
+                    </div>
+                </div>
+                <p class="sz-body-text sz-mt-4">Look for the moment <code class="sz-code">JCN</code> fires:</p>
+                <div class="sz-cli sz-mt-2">
+                    <div class="sz-cli__inner">
+                        [pc=0014 sp=&nbsp;&nbsp;1 op=0x1f] stack=[1]
+                    </div>
+                </div>
+                <p class="sz-body-text sz-mt-2">
+                    <code class="sz-code">op=0x1f</code> is <code class="sz-code">JCN</code>.
+                    The stack has a single <code class="sz-code">1</code> on it. The jump happens.
+                    A few instructions later, the same line appears with <code class="sz-code">0</code>:
+                </p>
+                <div class="sz-cli sz-mt-2">
+                    <div class="sz-cli__inner">
+                        [pc=0014 sp=&nbsp;&nbsp;1 op=0x1f] stack=[0]
+                    </div>
+                </div>
+                <p class="sz-body-text sz-mt-2">
+                    And this time the program counter doesn't change. The loop exits.
+                </p>
+                <p class="sz-body-text sz-mt-2">
+                    That's the whole shape of control flow. Everything else — nested loops,
+                    <code class="sz-code">if</code> statements, <code class="sz-code">while</code> loops,
+                    <code class="sz-code">for</code> loops — is built from these two instructions:
+                    a comparison that pushes a truth value, and a jump that reads it.
+                </p>
+            </section>
+
+            <hr class="sz-divider">
+
+            <!-- 15. Comments -->
+            <section class="sz-mb-8">
+                <span class="sz-label">15. Comments</span>
+                <p class="sz-body-text">
+                    Comments in OXNTAL are delimited by two <code class="sz-code">//</code> markers.
+                    Everything between the first and the second is discarded.
+                </p>
+                <div class="sz-cli sz-mt-4">
+                    <div class="sz-cli__inner">
+                        // this is a comment //<br>LDA 5
+                    </div>
+                </div>
+                <div class="sz-callout sz-callout--warn sz-mt-4">
+                    <strong>An odd number of <code class="sz-code">//</code> markers in a file is an error.</strong>
+                    If you write <code class="sz-code">LDA 5 // push five</code>,
+                    the assembler will complain about an unterminated comment.
+                    You'd need to write <code class="sz-code">// push five //</code> on its own line.
+                </div>
+                <p class="sz-body-text sz-mt-2">
+                    This is unusual. Most assemblers treat <code class="sz-code">//</code> as
+                    "ignore the rest of the line". OXNTAL pairs them up instead.
+                    For now, put your comments on their own lines with a matching pair of
+                    <code class="sz-code">//</code> markers on either side.
+                </p>
+            </section>
+
+            <hr class="sz-divider">
+
+            <!-- 16. Putting it all together -->
+            <section class="sz-mb-8">
+                <span class="sz-label">16. Putting it all together</span>
+                <p class="sz-body-text">
+                    Here's a slightly larger program. It prints the numbers 1 through 5,
+                    each on its own line, then stops.
+                </p>
+                <div class="sz-cli sz-mt-4">
+                    <div class="sz-cli__inner">
+                        VAR i<br><br>
+                        LDA 1<br>STA i<br><br>
+                        &gt;loop<br>
+                        &nbsp;&nbsp;LDR i<br>
+                        &nbsp;&nbsp;OUT<br><br>
+                        &nbsp;&nbsp;LDR i<br>
+                        &nbsp;&nbsp;INC<br>
+                        &nbsp;&nbsp;STA i<br><br>
+                        &nbsp;&nbsp;LDR i<br>
+                        &nbsp;&nbsp;LDA 6<br>
+                        &nbsp;&nbsp;LTH<br>
+                        &nbsp;&nbsp;JCN loop<br><br>
+                        BRK
+                    </div>
+                </div>
+                <p class="sz-body-text sz-mt-4">Output:</p>
+                <div class="sz-cli sz-mt-2">
+                    <div class="sz-cli__inner">1<br>2<br>3<br>4<br>5</div>
+                </div>
+                <p class="sz-body-text sz-mt-4">
+                    Notice the change from the countdown. The countdown compared
+                    <code class="sz-code">n &gt; 0</code> with <code class="sz-code">GTH</code>
+                    and decremented. This one compares <code class="sz-code">i &lt; 6</code>
+                    with <code class="sz-code">LTH</code> and increments.
+                    Same structure, different direction.
+                </p>
+                <div class="sz-callout sz-callout--info sz-mt-4">
+                    <strong>Every loop has three parts:</strong>
+                    <ol style="margin:8px 0 0; padding-left:20px;">
+                        <li><strong>The body.</strong> What you want to happen each time.</li>
+                        <li><strong>The update.</strong> How the loop variable changes.</li>
+                        <li><strong>The test.</strong> When to stop.</li>
+                    </ol>
+                    If you can write those three, you can write any loop.
+                </div>
+            </section>
+
+            <hr class="sz-divider">
+
+            <!-- 17. Where to go next -->
+            <section class="sz-mb-8">
+                <span class="sz-label">17. Where to go next</span>
+                <p class="sz-body-text">You now know:</p>
+                <ul style="font-size:13px; color:var(--sz-text-dim); line-height:1.9;">
+                    <li>How to push and pop numbers with <code class="sz-code">LDA</code> and <code class="sz-code">OUT</code>.</li>
+                    <li>How to add, subtract, multiply, divide.</li>
+                    <li>How to print characters with <code class="sz-code">DCD</code>.</li>
+                    <li>How to remember things with <code class="sz-code">VAR</code>, <code class="sz-code">STA</code>, <code class="sz-code">LDR</code>.</li>
+                    <li>How to loop with labels, comparisons, and <code class="sz-code">JCN</code>.</li>
+                    <li>How to debug with <code class="sz-code">--verbose</code>.</li>
+                </ul>
+                <p class="sz-body-text sz-mt-4">
+                    That is enough to write real programs. Not big ones — the whole program
+                    has to fit in 256 bytes — but real ones.
+                </p>
+                <div class="sz-flex sz-mt-6" style="gap:8px;">
+                    <a class="retro-btn" href="reference.html">&#9632; Reference</a>
+                    <a class="retro-btn" href="concepts.html">&#9881; Concepts</a>
+                    <a class="retro-btn" href="../oxntal.html">&#8962; Back to IDE</a>
+                </div>
+                <p class="sz-body-text sz-mt-6" style="font-style:italic; color:var(--sz-text-dim);">
+                    If you get stuck, run with <code class="sz-code">--verbose</code> and read the stack.
+                    The machine is not hiding anything from you.
+                </p>
+                <p class="sz-pixel--heading" style="margin-top:24px; color:var(--sz-teal);">GO WRITE SOMETHING.</p>
+            </section>
+
+        </div>
+
+        <div class="sz-mt-8">
+            View Page on <a href="https://github.com/king525dev/ts-cpu/blob/main/docs/tutorial.md">Github</a>
+        </div>
+    </main>
+
+    <footer class="retro-statusbar">
+        <span class="status-cell">Tutorial</span>
+        <span class="status-cell grow"></span>
+        <span class="status-cell">17 sections</span>
+    </footer>
+
+</div>
+
+<script src="https://king525dev.github.io/silicon-zen/library/sz.css"></script>
+<script src="retro-sz.js"></script>
+</body>
+</html>

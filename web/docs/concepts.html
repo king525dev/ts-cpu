@@ -1,0 +1,542 @@
+<!doctype html>
+<html lang="en" data-sz-theme="parchment">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>OXNTAL — Concepts</title>
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap" rel="stylesheet">
+
+    <link rel="stylesheet" href="https://king525dev.github.io/silicon-zen/library/sz.css" />
+    <link rel="stylesheet" href="retro-sz.css" />
+</head>
+<body class="retro-sz sz-reset sz-body">
+
+<div class="retro-window">
+
+    <header class="retro-titlebar">
+        <span class="logo">OXNTAL</span>
+        <span class="logo-sub">Concepts — How the machine works</span>
+    </header>
+
+    <nav class="retro-toolbar">
+        <a class="retro-btn" href="docs.html" data-page="docs.html">&#9776; Index</a>
+        <a class="retro-btn" href="tutorial.html" data-page="tutorial.html">&#9654; Tutorial</a>
+        <a class="retro-btn" href="reference.html" data-page="reference.html">&#9632; Reference</a>
+        <a class="retro-btn" href="concepts.html" data-page="concepts.html">&#9881; Concepts</a>
+        <span class="tb-sep"></span>
+        <a class="retro-btn" href="../oxntal.html">&#8962; IDE</a>
+    </nav>
+
+    <main class="retro-content">
+        <div class="sz-container">
+
+            <div class="sz-mb-8">
+                <span class="sz-label">OXN — Concepts</span>
+                <h1 class="sz-h1" style="margin:8px 0;">How the machine works</h1>
+                <p class="sz-lead">
+                    This document explains the why behind OXN.
+                    If you just want to run programs, the
+                    <a href="tutorial.html" style="color:var(--sz-teal);">tutorial</a> is a better place to start.
+                </p>
+            </div>
+
+            <!-- 1. The premise -->
+            <section class="sz-mb-8">
+                <span class="sz-label">1. The premise</span>
+                <p class="sz-body-text">
+                    A CPU is a machine that reads a program and does what it says. That's the whole thing.
+                    Every register, every opcode, every flag exists to make that loop possible.
+                </p>
+                <div class="sz-callout sz-callout--info sz-mt-4">
+                    <strong>I got into computers because I was curious of how it worked. Now I'm closer.</strong>
+                    <p style="margin:8px 0 0; font-size:13px;">
+                        You can't really believe "everything is a computer" until you've built one,
+                        all the way down, without cheating. OXN is that build.
+                        There is no point at which an arithmetic operation falls through to
+                        JavaScript's <code class="sz-code">+</code>, <code class="sz-code">&amp;</code>,
+                        or <code class="sz-code">^</code>. Every sum the machine performs is carried out
+                        by switches opening and closing.
+                    </p>
+                </div>
+                <p class="sz-body-text sz-mt-4">
+                    It is heavily inspired by the
+                    <a href="https://100r.co/site/uxn.html" target="_blank" rel="noopener" style="color:var(--sz-teal);">
+                        Uxn/Varvara ecosystem</a> and its assembly language
+                    <a href="https://wiki.xxiivv.com/site/uxntal.html" target="_blank" rel="noopener" style="color:var(--sz-teal);">
+                        Uxntal</a>. OXN is a much younger sibling: smaller, simpler, less useful,
+                    and built mainly to understand how Uxn might work.
+                </p>
+            </section>
+
+            <hr class="sz-divider">
+
+            <!-- 2. The seven layers -->
+            <section class="sz-mb-8">
+                <span class="sz-label">2. The seven layers</span>
+                <div class="sz-cli sz-mt-4">
+                    <div class="sz-cli__inner">
+                        ┌───────────────────────────────────────────────┐<br>
+                        │&nbsp;&nbsp;transistors&nbsp;&nbsp;&nbsp;NMOS and PMOS as switches&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;│<br>
+                        ├───────────────────────────────────────────────┤<br>
+                        │&nbsp;&nbsp;NAND&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;the only primitive gate&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;│<br>
+                        ├───────────────────────────────────────────────┤<br>
+                        │&nbsp;&nbsp;logic gates&nbsp;&nbsp;&nbsp;NOT, AND, OR, XOR from NAND&nbsp;&nbsp;&nbsp;&nbsp;│<br>
+                        ├───────────────────────────────────────────────┤<br>
+                        │&nbsp;&nbsp;adders&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;half, full, 8-bit ripple&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;│<br>
+                        ├───────────────────────────────────────────────┤<br>
+                        │&nbsp;&nbsp;ALU&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;arithmetic and logic&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;│<br>
+                        ├───────────────────────────────────────────────┤<br>
+                        │&nbsp;&nbsp;CPU&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;fetch, decode, execute&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;│<br>
+                        ├───────────────────────────────────────────────┤<br>
+                        │&nbsp;&nbsp;OXNTAL&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;the language&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;│<br>
+                        └───────────────────────────────────────────────┘
+                    </div>
+                </div>
+                <p class="sz-body-text sz-mt-4">
+                    Each layer knows only about the one below it. The CPU has no idea that
+                    <code class="sz-code">ADD</code> is eight full adders chained together.
+                    The ALU has no idea that a <code class="sz-code">NAND</code> is four transistors.
+                    That is the point of a layer — it lets you build up without having to remember down.
+                </p>
+            </section>
+
+            <hr class="sz-divider">
+
+            <!-- 3. Transistors -->
+            <section class="sz-mb-8">
+                <span class="sz-label">3. Transistors</span>
+                <p class="sz-body-text">
+                    A transistor is a switch with a remote control. It has three terminals:
+                    a gate, and the two ends of a channel. Whether current flows through the channel
+                    depends on the gate.
+                </p>
+                <p class="sz-body-text sz-mt-2">Two kinds.</p>
+                <ul style="font-size:13px; color:var(--sz-text-dim); line-height:1.9;">
+                    <li><strong>N-type (NMOS).</strong> Conducts when the gate is high (<code class="sz-code">1</code>).</li>
+                    <li><strong>P-type (PMOS).</strong> Conducts when the gate is low (<code class="sz-code">0</code>).</li>
+                </ul>
+                <p class="sz-body-text sz-mt-4">
+                    The two types are complements of each other. That complementarity is not a curiosity
+                    — it is the reason CMOS chips burn almost no power at rest.
+                    For any input, exactly one of the two transistor networks conducts, and the other does not.
+                </p>
+                <p class="sz-body-text sz-mt-2">
+                    OXN models transistors as <code class="sz-code">NTypeTransistor</code> and
+                    <code class="sz-code">PTypeTransistor</code> with a gate and a
+                    <code class="sz-code">conducts()</code> method. A real MOSFET has a threshold voltage,
+                    a drain-source resistance that varies with gate voltage, a gate capacitance, a leakage current.
+                    All of that is thrown away. What remains is the digital abstraction.
+                </p>
+            </section>
+
+            <hr class="sz-divider">
+
+            <!-- 4. NAND -->
+            <section class="sz-mb-8">
+                <span class="sz-label">4. NAND</span>
+                <p class="sz-body-text">
+                    You need one gate to start with. The industry picked NAND. Two reasons.
+                </p>
+                <div class="sz-callout sz-callout--info sz-mt-4">
+                    <strong>Reason one: NAND is cheap in CMOS.</strong>
+                    Four transistors. Two PMOS in parallel on the pull-up side, two NMOS in series
+                    on the pull-down side. The pull-up network conducts if either input is low,
+                    pulling the output high. The pull-down network conducts only if both inputs are high,
+                    pulling the output low. Exactly one of them conducts at any time.
+                </div>
+                <div class="sz-callout sz-callout--info sz-mt-4">
+                    <strong>Reason two: NAND is functionally complete.</strong>
+                    Any boolean function can be built from NAND gates alone. This is a theorem,
+                    not a coincidence. In OXN we take it seriously:
+                    <code class="sz-code">logicGates.ts</code> is not allowed to use native
+                    <code class="sz-code">&amp;</code>, <code class="sz-code">|</code>,
+                    <code class="sz-code">^</code>, or <code class="sz-code">~</code>.
+                    Every gate is a call to <code class="sz-code">NAND.gate(a, b)</code>.
+                </div>
+                <p class="sz-body-text sz-mt-4">
+                    That restriction is why the whole tower holds. It is the one rule that makes
+                    the "from transistors upward" claim provable rather than decorative.
+                </p>
+            </section>
+
+            <hr class="sz-divider">
+
+            <!-- 5. Logic gates -->
+            <section class="sz-mb-8">
+                <span class="sz-label">5. Logic gates</span>
+                <p class="sz-body-text">From NAND you get everything.</p>
+                <ul style="font-size:13px; color:var(--sz-text-dim); line-height:1.9;">
+                    <li><strong>NOT</strong> — tie both inputs together: <code class="sz-code">NAND(a, a)</code>.</li>
+                    <li><strong>AND</strong> — a NAND followed by a NOT. Two NANDs total.</li>
+                    <li><strong>OR</strong> — De Morgan's law: <code class="sz-code">NOT(NOT(a) AND NOT(b))</code>. Three NANDs.</li>
+                    <li><strong>XOR</strong> — four NANDs, in a small criss-cross pattern.</li>
+                </ul>
+                <p class="sz-body-text sz-mt-4">
+                    That's it. Four functions, twelve NANDs, ten lines of TypeScript.
+                    Every arithmetic and logical operation the CPU performs is built on top of these.
+                </p>
+            </section>
+
+            <hr class="sz-divider">
+
+            <!-- 6. Adders -->
+            <section class="sz-mb-8">
+                <span class="sz-label">6. Adders</span>
+                <p class="sz-body-text">
+                    Addition is the first thing that stops looking like a gate and starts looking like arithmetic.
+                </p>
+                <p class="sz-body-text sz-mt-2">
+                    A half adder takes two bits and produces a sum and a carry:
+                </p>
+                <div class="sz-cli sz-mt-4">
+                    <div class="sz-cli__inner">
+                        A&nbsp;&nbsp;B&nbsp;&nbsp;│ SUM CARRY<br>
+                        0&nbsp;&nbsp;0&nbsp;&nbsp;│&nbsp;&nbsp;0&nbsp;&nbsp;&nbsp;&nbsp;0<br>
+                        0&nbsp;&nbsp;1&nbsp;&nbsp;│&nbsp;&nbsp;1&nbsp;&nbsp;&nbsp;&nbsp;0<br>
+                        1&nbsp;&nbsp;0&nbsp;&nbsp;│&nbsp;&nbsp;1&nbsp;&nbsp;&nbsp;&nbsp;0<br>
+                        1&nbsp;&nbsp;1&nbsp;&nbsp;│&nbsp;&nbsp;0&nbsp;&nbsp;&nbsp;&nbsp;1
+                    </div>
+                </div>
+                <p class="sz-body-text sz-mt-4">
+                    <code class="sz-code">1 + 1 = 10</code> in binary, so the sum is <code class="sz-code">0</code>
+                    and the carry is <code class="sz-code">1</code>. The sum is
+                    <code class="sz-code">XOR(A, B)</code> — one or the other, not both.
+                    The carry is <code class="sz-code">AND(A, B)</code> — both. Two gates, and you can add two bits.
+                </p>
+                <p class="sz-body-text sz-mt-2">
+                    An <strong>8-bit adder</strong> is eight full adders in a row.
+                    The carry out of bit 0 feeds the carry in of bit 1. The carry out of bit 1 feeds bit 2.
+                    And so on. This is called a <strong>ripple-carry adder</strong>.
+                </p>
+                <p class="sz-body-text sz-mt-2">
+                    When you write <code class="sz-code">LDA 10 LDA 20 ADD</code>, the two numbers travel
+                    down through eight full adders, each built from two half adders, each built from XOR and AND,
+                    each built from NANDs, each built from four transistors. The result climbs back up.
+                </p>
+            </section>
+
+            <hr class="sz-divider">
+
+            <!-- 7. The ALU -->
+            <section class="sz-mb-8">
+                <span class="sz-label">7. The ALU</span>
+                <p class="sz-body-text">
+                    The Arithmetic Logic Unit is the top of the hardware stack.
+                    From outside, it exposes one method:
+                </p>
+                <div class="sz-cli sz-mt-4">
+                    <div class="sz-cli__inner">alu.exec("ADD", 10, 20)&nbsp;&nbsp;&nbsp;// → 30</div>
+                </div>
+                <p class="sz-body-text sz-mt-4">
+                    Inside, it converts <code class="sz-code">10</code> and <code class="sz-code">20</code>
+                    into arrays of eight bits, runs the appropriate circuit, and converts the result back into a number.
+                </p>
+                <p class="sz-body-text sz-mt-2">
+                    Everything below the ALU works on <code class="sz-code">Bit</code>
+                    (<code class="sz-code">0 | 1</code>). Everything above works on
+                    <code class="sz-code">number</code> (0–255). The conversion happens in exactly one file,
+                    <code class="sz-code">bitUtils.ts</code>, and nowhere else.
+                </p>
+            </section>
+
+            <hr class="sz-divider">
+
+            <!-- 8. Subtraction -->
+            <section class="sz-mb-8">
+                <span class="sz-label">8. Subtraction and two's complement</span>
+                <p class="sz-body-text">
+                    There is no subtractor in OXN. There doesn't need to be.
+                </p>
+                <p class="sz-body-text sz-mt-2">
+                    <code class="sz-code">A − B</code> is the same as
+                    <code class="sz-code">A + NOT(B) + 1</code>. This is called two's complement subtraction,
+                    and it is how nearly every real CPU does it.
+                    The same 8-bit adder that computes <code class="sz-code">10 + 20</code> also computes
+                    <code class="sz-code">20 − 10</code>, with an inverter on one input and a
+                    <code class="sz-code">+1</code> on the carry-in.
+                </p>
+                <div class="sz-callout sz-callout--info sz-mt-4">
+                    <strong>It's worth sitting with this for a moment.</strong>
+                    Subtraction, which feels like a fundamentally different operation from addition,
+                    is done by addition with a bit of creative rewriting.
+                    One adder, two operations. That kind of reuse is what makes hardware design tractable at all.
+                </div>
+                <p class="sz-body-text sz-mt-2">The same trick shows up all over OXN:</p>
+                <ul style="font-size:13px; color:var(--sz-text-dim); line-height:1.9;">
+                    <li><code class="sz-code">NEG</code> is <code class="sz-code">NOT(a) + 1</code>.</li>
+                    <li><code class="sz-code">INC</code> is <code class="sz-code">a + 1</code>, one operand hardwired to <code class="sz-code">ONE</code>.</li>
+                    <li><code class="sz-code">DEC</code> is <code class="sz-code">a - 1</code>, which is <code class="sz-code">a + NOT(ONE) + 1</code>.</li>
+                </ul>
+            </section>
+
+            <hr class="sz-divider">
+
+            <!-- 9. Why a stack machine -->
+            <section class="sz-mb-8">
+                <span class="sz-label">9. Why a stack machine?</span>
+                <p class="sz-body-text">Two ways to design a CPU.</p>
+                <div class="sz-callout sz-callout--info sz-mt-4">
+                    <strong>Register machines.</strong> (x86, ARM, MIPS, RISC-V.)
+                    Instructions name registers. <code class="sz-code">ADD r1, r2</code> adds two register values.
+                    Fast, but you need sixteen or thirty-two registers, a compiler that does register allocation,
+                    and a calling convention that says which registers survive a function call and which don't.
+                </div>
+                <div class="sz-callout sz-callout--info sz-mt-4">
+                    <strong>Stack machines.</strong> (Forth, Uxn, OXN, JVM bytecode, WebAssembly in places.)
+                    Instructions act on the top of a stack. <code class="sz-code">ADD</code> pops two values,
+                    adds them, pushes the result. No registers to name. The encoding is trivially compact.
+                </div>
+                <p class="sz-body-text sz-mt-4">
+                    OXN is a stack machine because stack machines are easier to build and easier to reason about.
+                    There is no register allocation, no calling convention, no "which register holds what" to remember.
+                    The stack is the only place intermediate values live, and the instruction set is small enough
+                    to fit on a postcard.
+                </p>
+            </section>
+
+            <hr class="sz-divider">
+
+            <!-- 10. The stack -->
+            <section class="sz-mb-8">
+                <span class="sz-label">10. The stack</span>
+                <p class="sz-body-text">
+                    256 bytes. A <code class="sz-code">Uint8Array</code>.
+                    A stack pointer that starts at 0 and grows upward.
+                </p>
+                <p class="sz-body-text sz-mt-2">
+                    The stack pointer is the index of the next free slot.
+                    Pushing stores a byte at <code class="sz-code">data[sp]</code> and increments <code class="sz-code">sp</code>.
+                    Popping decrements <code class="sz-code">sp</code> and returns <code class="sz-code">data[sp]</code>.
+                    Those two lines are the whole data structure.
+                </p>
+                <div class="sz-callout sz-callout--warn sz-mt-4">
+                    <strong>There is no bounds checking at the machine level.</strong>
+                    Pushing when the stack is full and popping when it's empty will silently corrupt memory.
+                    Every assembly programmer needs to know this. The CPU is not going to save you,
+                    because a real CPU doesn't save you, and the point of OXN is to be a real CPU.
+                </div>
+            </section>
+
+            <hr class="sz-divider">
+
+            <!-- 11. RAM -->
+            <section class="sz-mb-8">
+                <span class="sz-label">11. RAM</span>
+                <p class="sz-body-text">
+                    256 bytes. Address 0 is special: <code class="sz-code">STA 0</code> means
+                    "put this value at the next free address", and <code class="sz-code">LDR 0</code>
+                    reads back whatever was stored that way. Every other address is used directly.
+                </p>
+                <p class="sz-body-text sz-mt-2">
+                    Variables declared with <code class="sz-code">VAR x</code> or
+                    <code class="sz-code">@x</code> are allocated starting at address 1, going up.
+                    The assembler does the allocation at assembly time, so by the time the CPU runs,
+                    every <code class="sz-code">STA x</code> and <code class="sz-code">LDR x</code>
+                    has already been replaced with a concrete address.
+                </p>
+                <p class="sz-body-text sz-mt-2">
+                    RAM is deliberately small. 256 bytes is enough to hold a handful of variables
+                    and a small buffer. It is not enough to hold a string of any length, a sprite, or a map.
+                </p>
+            </section>
+
+            <hr class="sz-divider">
+
+            <!-- 12. Fetch, decode, execute -->
+            <section class="sz-mb-8">
+                <span class="sz-label">12. Fetch, decode, execute</span>
+                <p class="sz-body-text">
+                    Every instruction goes through the same three phases.
+                    This is the heart of the machine, and it's about thirty lines of TypeScript in
+                    <code class="sz-code">cpu.ts</code>.
+                </p>
+                <div class="sz-flex sz-mt-4" style="gap:8px; flex-wrap:wrap;">
+                    <div class="sz-card" style="flex:1; min-width:180px;">
+                        <div class="sz-card__header">
+                            <span class="sz-card__title">FETCH</span>
+                        </div>
+                        <div class="sz-card__body">
+                            Read <code class="sz-code">program[pc]</code>.
+                            That byte is the opcode. Increment PC.
+                        </div>
+                    </div>
+                    <div class="sz-card" style="flex:1; min-width:180px;">
+                        <div class="sz-card__header">
+                            <span class="sz-card__title">DECODE</span>
+                        </div>
+                        <div class="sz-card__body">
+                            Look at the opcode. <code class="sz-code">0x01</code>? We're doing
+                            <code class="sz-code">LDA</code>. <code class="sz-code">0x0A</code>?
+                            <code class="sz-code">ADD</code>. <code class="sz-code">0xFF</code>?
+                            <code class="sz-code">BRK</code>.
+                        </div>
+                    </div>
+                    <div class="sz-card" style="flex:1; min-width:180px;">
+                        <div class="sz-card__header">
+                            <span class="sz-card__title">EXECUTE</span>
+                        </div>
+                        <div class="sz-card__body">
+                            Do the thing. Maybe pop from the stack, maybe push,
+                            maybe read <code class="sz-code">program[pc]</code> for a parameter,
+                            maybe jump. For most instructions, execution is three or four lines.
+                        </div>
+                    </div>
+                </div>
+                <p class="sz-body-text sz-mt-4">
+                    The CPU logs each step when a <code class="sz-code">Logger</code> is attached.
+                    Run with <code class="sz-code">--trace</code> and you get one line per instruction:
+                </p>
+                <div class="sz-cli sz-mt-2">
+                    <div class="sz-cli__inner">
+                        [21.09.26-22:44] [pc=0x0000 op=0x01 sp=1] Stack: [ 05 ] {3ms}<br>
+                        [21.09.26-22:44] [pc=0x0002 op=0x18 sp=0] Stack: [  ] {3ms}
+                    </div>
+                </div>
+                <p class="sz-body-text sz-mt-2">
+                    Read that as: at byte 0 we executed opcode <code class="sz-code">0x01</code>
+                    (<code class="sz-code">LDA</code>), and after it ran the stack had one byte on it.
+                    Then at byte 2 we executed <code class="sz-code">0x18</code>
+                    (<code class="sz-code">OUT</code>), and after it ran the stack was empty.
+                </p>
+            </section>
+
+            <hr class="sz-divider">
+
+            <!-- 13. Design decisions -->
+            <section class="sz-mb-8">
+                <span class="sz-label">13. Design decisions</span>
+                <p class="sz-body-text">A few things that were deliberate, and a few that weren't.</p>
+                <div class="sz-cli sz-mt-4">
+                    <div class="sz-cli__inner">
+                        <span class="sz-ok">8-bit, not 16.</span>
+                        Every value fits in a byte. Every address fits in a byte.
+                        The whole system is small enough to hold in your head.<br><br>
+
+                        <span class="sz-ok">Stack machine, not register machine.</span>
+                        Fewer instructions, simpler encoding, nothing to allocate.<br><br>
+
+                        <span class="sz-ok">Two's complement subtraction.</span>
+                        Zero extra hardware. The adder already exists.<br><br>
+
+                        <span class="sz-warn">Comments are paired // markers.</span>
+                        This is a bug, or at least a quirk. Most assemblers treat
+                        // as "to the end of the line". OXN treats it as a toggle.
+                        It works, but it surprises people. It's on the list.<br><br>
+
+                        <span class="sz-warn">Program addresses are one byte.</span>
+                        Which means programs top out at 256 bytes.
+                        This is the first thing to fix if OXN ever grows.<br><br>
+
+                        <span class="sz-ok">Labels resolve to bytecode addresses, not token indices.</span>
+                        This is the fix for a subtle bug that existed in an earlier version.
+                    </div>
+                </div>
+            </section>
+
+            <hr class="sz-divider">
+
+            <!-- 14. The adapter pattern -->
+            <section class="sz-mb-8">
+                <span class="sz-label">14. The adapter pattern</span>
+                <p class="sz-body-text">
+                    The CPU does not know where its output goes. It calls methods on two interfaces:
+                </p>
+                <div class="sz-cli sz-mt-4">
+                    <div class="sz-cli__inner">
+                        interface CPUOutput {<br>
+                        &nbsp;&nbsp;writeNumber(value: number): void;<br>
+                        &nbsp;&nbsp;writeChar(char: string): void;<br>
+                        &nbsp;&nbsp;writeStack(values: readonly number[]): void;<br>
+                        &nbsp;&nbsp;writeError(message: string): void;<br>
+                        }<br><br>
+                        interface CPUDisplay {<br>
+                        &nbsp;&nbsp;showTop(value: number): void;<br>
+                        &nbsp;&nbsp;printStack(values: readonly number[]): void;<br>
+                        }
+                    </div>
+                </div>
+                <p class="sz-body-text sz-mt-4">Somebody else provides concrete implementations. There are three:</p>
+                <ul style="font-size:13px; color:var(--sz-text-dim); line-height:1.9;">
+                    <li><strong>CLI.</strong> <code class="sz-code">NodeOutput</code> writes to <code class="sz-code">process.stdout</code>, errors to <code class="sz-code">process.stderr</code>.</li>
+                    <li><strong>Web.</strong> <code class="sz-code">BufferOutput</code> accumulates strings in memory.</li>
+                    <li><strong>Desktop.</strong> Same as web, running inside Electron.</li>
+                </ul>
+                <p class="sz-body-text sz-mt-2">
+                    The pattern is called dependency inversion: the CPU depends on an interface it defines,
+                    not on the environment it runs in. If you want OXN to talk to a serial port, an LED matrix,
+                    or a Discord bot, you write a new adapter and pass it in. You don't touch the CPU.
+                </p>
+            </section>
+
+            <hr class="sz-divider">
+
+            <!-- 15. What OXN is not -->
+            <section class="sz-mb-8">
+                <span class="sz-label">15. What OXN is not</span>
+                <p class="sz-body-text">A few things it would be easy to assume, and are false.</p>
+                <div class="sz-callout sz-callout--warn sz-mt-4">
+                    <strong>It is not fast.</strong>
+                    The gate-level ALU means <code class="sz-code">ADD</code> is roughly eight hundred
+                    function calls through the transistor layer. A native <code class="sz-code">+</code>
+                    would be one CPU instruction. The trade is worth making because the point is understanding,
+                    not speed.
+                </div>
+                <div class="sz-callout sz-callout--warn sz-mt-4">
+                    <strong>It is not complete.</strong>
+                    There are no functions, no interrupts, no signed integers, no floating point, no linker.
+                    Programs are limited to 256 bytes. RAM is limited to 256 bytes.
+                    The stack is limited to 256 bytes. These are all fixable, but they haven't been fixed.
+                </div>
+                <div class="sz-callout sz-callout--warn sz-mt-4">
+                    <strong>It is not a compiler.</strong>
+                    OXNTAL is an assembler. Each line of source maps to one or two bytes.
+                    There is no optimisation pass, no type checking, no semantic analysis beyond
+                    label and variable resolution.
+                </div>
+                <div class="sz-callout sz-callout--warn sz-mt-4">
+                    <strong>It is not a Uxn emulator.</strong>
+                    It is inspired by Uxn, and the shape of the instruction set is similar,
+                    but the opcodes are different, the memory model is different, and the assembly language
+                    is different. A Uxn ROM will not run on OXN, and an OXN program will not run on Uxn.
+                </div>
+            </section>
+
+            <hr class="sz-divider">
+
+            <!-- 16. Where to go next -->
+            <section class="sz-mb-8">
+                <span class="sz-label">16. Where to go next</span>
+                <div class="sz-flex" style="gap:8px;">
+                    <a class="retro-btn" href="tutorial.html">&#9654; Tutorial</a>
+                    <a class="retro-btn" href="reference.html">&#9632; Reference</a>
+                    <a class="retro-btn" href="../oxntal.html">&#8962; Back to IDE</a>
+                </div>
+                <p class="sz-body-text sz-mt-6" style="font-style:italic; color:var(--sz-text-dim);">
+                    If you want to understand OXN, read the code. It's small enough to read end-to-end
+                    in an afternoon. Start at <code class="sz-code">src/cpu/cpu.ts</code> and follow the switch statement.
+                </p>
+                <p class="sz-pixel--heading" style="margin-top:24px; color:var(--sz-teal);">GO READ IT.</p>
+            </section>
+
+        </div>
+
+        <div class="sz-mt-8">
+            View Page on <a href="https://github.com/king525dev/ts-cpu/blob/main/docs/concepts.md">Github</a>
+        </div>
+    </main>
+
+    <footer class="retro-statusbar">
+        <span class="status-cell">Concepts</span>
+        <span class="status-cell grow"></span>
+        <span class="status-cell">16 sections &middot; 7 layers</span>
+    </footer>
+
+</div>
+
+<script src="https://king525dev.github.io/silicon-zen/library/sz.js"></script>
+<script src="retro-sz.js"></script>
+</body>
+</html>

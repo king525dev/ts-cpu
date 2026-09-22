@@ -1,0 +1,322 @@
+/* ═══════════════════════════════════════════════════════════
+   RETRO-SZ.CSS
+   Windows XP-style IDE chrome + Silicon Zen component overrides
+   ═══════════════════════════════════════════════════════════ */
+
+:root {
+    /* XP-era chrome colours */
+    --xp-titlebar-top: #0058ee;
+    --xp-titlebar-bottom: #3f8cf3;
+    --xp-face: #ece9d8;
+    --xp-face-light: #fdfdfa;
+    --xp-face-dark: #ddd8c7;
+    --xp-border: #a8a496;
+    --xp-border-light: #fff;
+    --xp-border-dark: #808080;
+    --xp-highlight: #316ac5;
+    --xp-text: #000;
+    --xp-text-dim: #555;
+
+    /* Override Silicon Zen tokens to match XP palette */
+    --sz-bg: var(--xp-face);
+    --sz-bg-alt: var(--xp-face-dark);
+    --sz-surface: #fff;
+    --sz-surface-alt: #f0f0ed;
+    --sz-border: #333;
+    --sz-border-dim: #888;
+    --sz-text: #0d0d0d;
+    --sz-text-dim: #555;
+    --sz-cli-bg: #0b0b0b;
+    --sz-cli-text: #d6d6d6;
+    --sz-teal: #316ac5;
+    --sz-teal-dim: #1b5cbe;
+}
+
+/* ── Base ─────────────────────────────────────────────────── */
+body.retro-sz {
+    margin: 0;
+    padding: 8px;
+    height: 100vh;
+    display: flex;
+    flex-direction: column;
+    background: linear-gradient(180deg, #4a8ae0 0%, #245edb 45%, #123f96 100%);
+    font-family: Tahoma, "Segoe UI", Verdana, sans-serif;
+    font-size: 11px;
+    color: var(--xp-text);
+    overflow: hidden;
+    -webkit-font-smoothing: antialiased;
+}
+
+/* ── Window shell ─────────────────────────────────────────── */
+.retro-window {
+    flex: 1 1 auto;
+    min-height: 0;
+    display: flex;
+    flex-direction: column;
+    background: var(--xp-face);
+    border: 1px solid #0a3a8f;
+    border-bottom: none;
+    border-radius: 8px 8px 0 0;
+    overflow: hidden;
+    box-shadow: 0 6px 22px rgba(0,0,0,.45);
+}
+
+/* ── Title bar ────────────────────────────────────────────── */
+.retro-titlebar {
+    flex: 0 0 auto;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    height: 28px;
+    padding: 0 8px;
+    background: linear-gradient(180deg,
+        #0058ee 0%, #3f8cf3 8%, #0054e3 42%, #0054e3 88%, #3f8cf3 100%);
+    border-bottom: 1px solid #0a246a;
+    color: #fff;
+    user-select: none;
+    overflow: hidden;
+}
+.retro-titlebar .logo {
+    font-family: "Press Start 2P", "Courier New", monospace;
+    font-size: 13px;
+    line-height: 1;
+    letter-spacing: 1px;
+    color: #fff;
+    text-shadow: 1px 1px 0 #062a6b, 2px 2px 4px rgba(0,0,0,.5);
+    padding-top: 2px;
+    white-space: nowrap;
+}
+.retro-titlebar .logo-sub {
+    font-size: 10px;
+    letter-spacing: .5px;
+    color: #cfe0ff;
+    text-shadow: 1px 1px 0 rgba(0,0,0,.4);
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+/* ── Toolbar ──────────────────────────────────────────────── */
+.retro-toolbar {
+    flex: 0 0 auto;
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 4px;
+    padding: 5px 7px;
+    background: linear-gradient(180deg, #fdfdfa 0%, #ece9d8 55%, #ddd8c7 100%);
+    border-bottom: 1px solid var(--xp-border);
+    box-shadow: inset 0 1px 0 #fff;
+}
+.retro-toolbar .tb-sep {
+    width: 1px;
+    height: 20px;
+    margin: 0 3px;
+    background: #b6b2a4;
+    box-shadow: 1px 0 0 #fff;
+    flex: 0 0 auto;
+}
+
+/* ── Classic button ───────────────────────────────────────── */
+.retro-btn {
+    font: 11px Tahoma, Verdana, sans-serif;
+    color: #10233f;
+    padding: 3px 10px 4px;
+    min-height: 22px;
+    border: 1px solid #7d9dbd;
+    border-radius: 3px;
+    background: linear-gradient(180deg,
+        #ffffff 0%, #f4f2ea 45%, #e7e2d6 46%, #d9d3c6 100%);
+    box-shadow: inset 0 0 0 1px #fff, 0 1px 1px rgba(0,0,0,.12);
+    cursor: pointer;
+    text-decoration: none;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    white-space: nowrap;
+    user-select: none;
+}
+.retro-btn:hover {
+    border-color: #e8a33d;
+    background: linear-gradient(180deg,
+        #fffdf6 0%, #fdf3dc 45%, #f6e3b8 46%, #f0d79c 100%);
+}
+.retro-btn:active {
+    background: linear-gradient(180deg, #cfc9bb, #e6e1d5);
+    box-shadow: inset 1px 1px 2px rgba(0,0,0,.28);
+    padding-top: 4px;
+    padding-bottom: 3px;
+}
+.retro-btn.is-active {
+    background: linear-gradient(180deg, #b6d4f7, #7eade8);
+    border-color: #4a7dbd;
+    box-shadow: inset 1px 1px 2px rgba(0,0,0,.2);
+    color: #062a6b;
+}
+
+/* ── Content area ─────────────────────────────────────────── */
+.retro-content {
+    flex: 1 1 auto;
+    min-height: 0;
+    overflow: auto;
+    padding: 10px;
+    background: var(--xp-face);
+    border-top: 1px solid #808080;
+}
+
+/* ── Status bar ───────────────────────────────────────────── */
+.retro-statusbar {
+    flex: 0 0 auto;
+    display: flex;
+    align-items: stretch;
+    gap: 3px;
+    height: 22px;
+    margin: 4px;
+}
+.retro-statusbar .status-cell {
+    display: flex;
+    align-items: center;
+    padding: 0 8px;
+    background: var(--xp-face);
+    border: 1px solid;
+    border-color: var(--xp-border) #fff #fff var(--xp-border);
+    font-size: 11px;
+    color: #2c2c2c;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+.retro-statusbar .status-cell.grow { flex: 1 1 auto; }
+
+/* ── Silicon Zen overrides ────────────────────────────────── */
+.retro-sz .sz-container {
+    max-width: 960px;
+    padding-left: 0;
+    padding-right: 0;
+}
+.retro-sz .sz-card {
+    border: 1px solid var(--xp-border);
+    box-shadow: inset 1px 1px 0 #fff, inset -1px -1px 0 #cfcabb;
+}
+.retro-sz .sz-card__header {
+    background: linear-gradient(180deg,
+        #0a5fe0 0%, #4a9bf5 8%, #0a5fe0 45%, #0653c8 92%, #4a9bf5 100%);
+    border-bottom: 1px solid #063d92;
+}
+.retro-sz .sz-card__title {
+    color: #fff;
+    font-size: 11px;
+    font-weight: bold;
+    letter-spacing: .9px;
+    text-shadow: 1px 1px 0 rgba(0,0,0,.45);
+}
+.retro-sz .sz-card__body {
+    background: #fff;
+    padding: 12px;
+}
+.retro-sz .sz-btn {
+    font-family: Tahoma, Verdana, sans-serif;
+    font-size: 11px;
+    border: 1px solid #7d9dbd;
+    border-radius: 3px;
+    background: linear-gradient(180deg,
+        #ffffff 0%, #f4f2ea 45%, #e7e2d6 46%, #d9d3c6 100%);
+    box-shadow: inset 0 0 0 1px #fff, 0 1px 1px rgba(0,0,0,.12);
+    transform: none !important;
+    transition: none;
+    padding: 3px 10px 4px;
+    letter-spacing: 0;
+}
+.retro-sz .sz-btn:hover {
+    background: linear-gradient(180deg,
+        #fffdf6 0%, #fdf3dc 45%, #f6e3b8 46%, #f0d79c 100%);
+    border-color: #e8a33d;
+    box-shadow: inset 0 0 0 1px #fff, 0 1px 1px rgba(0,0,0,.12);
+}
+.retro-sz .sz-btn:active {
+    background: linear-gradient(180deg, #cfc9bb, #e6e1d5);
+    box-shadow: inset 1px 1px 2px rgba(0,0,0,.28);
+}
+.retro-sz .sz-cli {
+    border: 1px solid #808080;
+    box-shadow: inset 1px 1px 0 #404040, inset -1px -1px 0 #a0a0a0;
+}
+.retro-sz .sz-cli::before { display: none; } /* remove scanlines for readability */
+.retro-sz .sz-table {
+    font-size: 11px;
+}
+.retro-sz .sz-table th {
+    border-bottom: 2px solid var(--sz-teal);
+    font-size: 10px;
+}
+.retro-sz .sz-table td {
+    border-bottom: 1px solid #d0d0d0;
+    padding: 6px 8px;
+}
+.retro-sz .sz-callout {
+    border-left-color: var(--sz-teal);
+    background: rgba(49,106,197,0.06);
+}
+.retro-sz .sz-callout--warn {
+    border-left-color: #cc8b3d;
+    background: rgba(204,139,61,0.07);
+}
+.retro-sz .sz-callout--error {
+    border-left-color: #d94f3d;
+    background: rgba(217,79,61,0.07);
+}
+.retro-sz .sz-h1, .retro-sz .sz-h2, .retro-sz .sz-h3 {
+    color: #0d0d0d;
+}
+.retro-sz .sz-label {
+    color: var(--sz-teal);
+    font-size: 10px;
+    letter-spacing: 1.2px;
+}
+.retro-sz .sz-code {
+    background: #f0f0ed;
+    border: 1px solid #c0c0c0;
+    color: #1b5cbe;
+    font-size: 12px;
+    padding: 1px 5px;
+}
+.retro-sz .sz-pixel--hero {
+    font-size: clamp(14px, 2.5vw, 24px);
+    color: var(--sz-teal);
+}
+.retro-sz .sz-tabs__item {
+    font-family: Tahoma, Verdana, sans-serif;
+    font-size: 11px;
+    letter-spacing: 0;
+    text-transform: none;
+    border-bottom-color: transparent;
+}
+.retro-sz .sz-tabs__item.is-active {
+    border-bottom-color: var(--sz-teal);
+    color: var(--sz-teal);
+}
+
+/* ── Scrollbars ───────────────────────────────────────────── */
+.retro-content::-webkit-scrollbar { width: 16px; }
+.retro-content::-webkit-scrollbar-track {
+    background: #f1efe2;
+    border-left: 1px solid #d4d0bf;
+}
+.retro-content::-webkit-scrollbar-thumb {
+    background: linear-gradient(180deg, #fff, #d6d3c6);
+    border: 1px solid #a8a496;
+    box-shadow: inset 1px 1px 0 #fff, inset -1px -1px 0 #b0ac9e;
+}
+.retro-content::-webkit-scrollbar-thumb:hover {
+    background: linear-gradient(180deg, #fff, #c8d8f0);
+    border-color: #7d9dbd;
+}
+
+/* ── Responsive ───────────────────────────────────────────── */
+@media (max-width: 640px) {
+    .retro-toolbar { gap: 2px; }
+    .retro-btn { font-size: 10px; padding: 2px 6px; }
+    .retro-titlebar .logo { font-size: 11px; }
+    .retro-titlebar .logo-sub { display: none; }
+    .retro-content { padding: 6px; }
+}

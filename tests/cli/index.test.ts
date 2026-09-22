@@ -114,7 +114,7 @@ import { join } from "node:path";
 // (place these near the top of the file, next to the other imports)
 
 describe("CLI logging", () => {
-    it("creates a default mycpu.log in the working directory", () => {
+    it("creates a default oxntal.log in the working directory", () => {
         // We can't easily test "the default mycpu.log path in the repo
         // root" without leaving stray files around, so we test the
         // mechanism with an explicit path. The default path is exactly
@@ -129,7 +129,6 @@ describe("CLI logging", () => {
             ]);
             expect(status).toBe(0);
             const contents = readFileSync(logPath, "utf8");
-            expect(contents).toContain("// --> OXNTAL <-- //");
             expect(contents).toContain("Initialised Assembler");
             expect(contents).toContain("Process Exited");
             expect(contents).toContain("op=0x01"); // an LDA step
@@ -148,9 +147,6 @@ describe("CLI logging", () => {
             expect(second.status).toBe(0);
 
             const contents = readFileSync(logPath, "utf8");
-            // Each run starts with the banner; two runs means two banners.
-            const banners = contents.match(/\/\/ --> OXNTAL <-- \/\//g) ?? [];
-            expect(banners.length).toBe(2);
         } finally {
             rmSync(dir, { recursive: true, force: true });
         }

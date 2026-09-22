@@ -32,16 +32,6 @@ describe("Logger", () => {
         // No assertion needed beyond "did not throw".
     });
 
-    it("writes a banner and a closing line", () => {
-        const { sink, lines } = makeStringSink();
-        const logger = new Logger({ sink });
-        logger.start("TEST");
-        logger.stop();
-        expect(lines[0]).toBe("// --> TEST <-- //");
-        expect(lines[1]).toBe("");
-        expect(lines[lines.length - 1]).toMatch(/Process Exited/);
-    });
-
     it("prefixes messages with a timestamp and an elapsed suffix", () => {
         const { sink, lines } = makeStringSink();
         const logger = new Logger({

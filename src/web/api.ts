@@ -82,7 +82,7 @@ export function assemble(
     const logSink = options.captureLog ? new StringLogSink() : null;
     const logger = logSink ? new Logger({ sink: logSink }) : new Logger();
 
-    if (logSink) logger.start("MyCPU");
+    if (logSink) logger.start(`OXNTAL WEB @ ${ new Date().toLocaleString('en-GB')}`);
 
     try {
         const bytecode = new Assembler(logger).assemble(source);
@@ -124,7 +124,7 @@ export function execute(
         ? new CanvasDisplay(options.canvas)
         : nullDisplay;
 
-    if (logSink) logger.start("MyCPU");
+    if (logSink) logger.start(`OXNTAL WEB @ ${ new Date().toLocaleString('en-GB')}`);
 
     logger.event("CPU initialised");
     const cpu = new CPU(output, display, logger);

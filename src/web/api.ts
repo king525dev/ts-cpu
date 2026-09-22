@@ -82,7 +82,7 @@ export function assemble(
     const logSink = options.captureLog ? new StringLogSink() : null;
     const logger = logSink ? new Logger({ sink: logSink }) : new Logger();
 
-    if (logSink) logger.start(`OXNTAL WEB @ ${ new Date().toLocaleString('en-GB')}`);
+    if (logSink) logger.start(`OXNTAL for WEB @ ${ new Date().toLocaleString('en-GB')}`);
 
     try {
         const bytecode = new Assembler(logger).assemble(source);

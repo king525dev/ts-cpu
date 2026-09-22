@@ -214,7 +214,7 @@ function main(): number {
         logger.stop();
     });
 
-    logger.start(`OXNTAL CLI @ ${ new Date().toLocaleString('en-GB')}`);
+    logger.start(`OXNTAL for CLI @ ${ new Date().toLocaleString('en-GB')}`);
     if (opts.logTarget.kind === "file") {
         logger.info(`Logging to ${opts.logTarget.path}`);
     }

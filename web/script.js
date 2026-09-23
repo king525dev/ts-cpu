@@ -11,7 +11,7 @@
     };
 
     const DEFAULT_SOURCE =
-        '// Print "Hi!" and then show a bar for value 42.\n' +
+        '// Print "Hi!" and then show a bar for value 42.//\n' +
         'LDA " 33 105 72 "\n' +
         'DCD * 3\n' +
         'LDA 42\n' +

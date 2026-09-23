@@ -1,0 +1,129 @@
+<!doctype html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Oxntal: Web IDE</title>
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link rel="icon" href="./icon.ico">
+    <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="style.css">
+</head>
+
+<body>
+    <div class="app">
+        <div class="window">
+
+            <!-- ================= TITLE BAR ================= -->
+            <header class="titlebar">
+                <span class="logo">OXNTAL</span>
+                <span class="logo-sub">Web Development Environment</span>
+            </header>
+
+            <!-- ================= TOOLBAR ================= -->
+            <nav class="toolbar">
+                <button class="btn primary" id="runBtn" title="Run the program (Ctrl+Enter)">&#9654; Run</button>
+                <button class="btn" id="runLogBtn" title="Run and capture the execution log">&#9654; Run + Log</button>
+
+                <span class="tb-sep"></span>
+
+                <div class="menu" id="samplesMenu">
+                    <button class="btn" id="samplesBtn">Samples &#9662;</button>
+                    <ul class="menu-list" id="samplesList"></ul>
+                </div>
+
+                <button class="btn" id="downloadBtn" title="Download the current source as program.oxn">&#10515;
+                    Download .oxn</button>
+
+                <span class="tb-sep"></span>
+
+                <a class="btn" id="linkGithub" href="#" target="_blank" rel="noopener">GitHub</a>
+                <a class="btn" id="linkDocs" href="#" target="_blank" rel="noopener">Documentation</a>
+                <a class="btn" id="linkTutorial" href="#" target="_blank" rel="noopener">Tutorial</a>
+            </nav>
+
+            <!-- ================= WORKSPACE ================= -->
+            <div class="workspace" id="workspace">
+                <div class="main-col" id="mainCol">
+
+                    <!-- SOURCE -->
+                    <section class="panel" id="panelSource">
+                        <div class="panel-title">
+                            <span class="label">SOURCE</span>
+                            <button class="pbtn" data-max="source" title="Maximize / restore">&#9633;</button>
+                        </div>
+                        <div class="panel-body">
+                            <textarea id="source" spellcheck="false" wrap="off"
+                                aria-label="Oxntal source code"></textarea>
+                        </div>
+                    </section>
+
+                    <div class="splitter h" id="hsplit" title="Drag to resize"></div>
+
+                    <div class="bottom-row" id="bottomRow">
+
+                        <!-- OUTPUT -->
+                        <section class="panel" id="panelOutput">
+                            <div class="panel-title">
+                                <span class="label">OUTPUT</span>
+                                <button class="pbtn" data-max="output" title="Maximize / restore">&#9633;</button>
+                            </div>
+                            <div class="panel-body console-wrap">
+                                <div class="console" id="output"></div>
+                            </div>
+                        </section>
+
+                        <div class="splitter v" id="vsplit" title="Drag to resize"></div>
+
+                        <!-- DISPLAY -->
+                        <section class="panel" id="panelDisplay">
+                            <div class="panel-title">
+                                <span class="label">DISPLAY</span>
+                                <button class="pbtn" data-max="display" title="Maximize / restore">&#9633;</button>
+                            </div>
+                            <div class="panel-body">
+                                <canvas id="screen" width="256" height="256"></canvas>
+                            </div>
+                        </section>
+
+                    </div>
+                </div>
+
+                <!-- LOG SLOT -->
+                <div class="log-slot" id="logSlot">
+                    <div class="log-splitter" id="logSplitter" title="Drag to resize"></div>
+
+                    <section class="panel" id="panelLog">
+                        <div class="panel-title">
+                            <span class="label">LOG</span>
+                            <button class="pbtn" data-max="log" title="Maximize / restore">&#9633;</button>
+                            <button class="pbtn" id="logClose" title="Collapse log">&#10005;</button>
+                        </div>
+                        <div class="panel-body console-wrap">
+                            <div class="console" id="log"></div>
+                        </div>
+                    </section>
+
+                    <button class="log-tab" id="logTab" title="Show log"><span>LOG</span></button>
+                </div>
+            </div>
+
+            <!-- ================= STATUS BAR ================= -->
+            <div class="statusbar">
+                <span class="status-cell" id="status">Ready</span>
+                <span class="status-cell grow"></span>
+                <span class="status-cell" id="statusInfo">&mdash;</span>
+            </div>
+        </div>
+    </div>
+
+    <!-- Load the bundled Oxntal runtime. Adjust the path if your build output differs. -->
+    <script src="../../../dist/web/oxntal.iife.js"></script>
+
+    <script src="script.js"></script>
+</body>
+
+</html>

@@ -525,8 +525,8 @@ The [reference](reference.md) has every opcode and every rule. The
 [concepts document](concepts.md) explains why the machine is built
 this way, from transistors upward.
 
-Somewhere in `programs/` are more examples. `programs/tests/countdown.oxn`
-is a bigger version of the loop above. `programs/tests/hello.oxn` is the
+Somewhere in `programs/` are more examples. `programs/samples/countdown.oxn`
+is a bigger version of the loop above. `programs/samples/hello.oxn` is the
 shortest possible program that does something useful.
 
 If you get stuck, run with `--verbose` and read the stack. The machine

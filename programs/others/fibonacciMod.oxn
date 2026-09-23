@@ -1,0 +1,40 @@
+// The Fibonacci sequence, allowed to wrap. Values look random but aren't //
+VAR a
+VAR b
+VAR t
+VAR i
+
+LDA 1
+STA a
+LDA 1
+STA b
+LDA 0
+STA i
+
+>loop
+  LDR i
+  LDA 20
+  LTH
+  JCN body
+  JMP done
+
+>body
+  LDR a
+
+  LDR a
+  STA t
+  LDR b
+  STA a
+  LDR t
+  LDR b
+  ADD
+  STA b
+
+  LDR i
+  INC
+  STA i
+  JMP loop
+
+>done
+PRT
+BRK

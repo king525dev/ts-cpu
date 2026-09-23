@@ -1,28 +1,17 @@
-//
-# Counts down from 5 to 1, printing each number on its own line. 
-#
-# This demonstrates the Phase-2 features working end to end: 
-#   * VAR       — declares a named variable and allocates a RAM address 
-#   * STA/LDR   — store to / load from that RAM address 
-#   * >label    — a code label the assembler resolves to a bytecode address 
-#   * GTH       — pops two values, pushes 1 if the second is greater 
-#   * JCN       — pops a condition, jumps if it is non-zero 
-//
-
-VAR counter
+// This program tests conditional jumps, variables and loops //
 
 LDA 5
-STA counter
+STA 0x05
 
 >loop
-LDR counter        // load counter                  //
-OUT                // print it                      //
-LDR counter        // load counter                  //
-DEC                // decrement                     //
-STA counter        // store back                    //
-LDR counter        // load counter again            //
-LDA 0              // push 0                        //
-GTH                // is counter > 0 ?              //
-JCN loop           // if yes, jump back to `loop`   //
+LDR 0x05
+DUP
+OUT
+DEC
+DUP
+STA 0x05
+LDA 0
+GTH
+JCN loop
 
 BRK

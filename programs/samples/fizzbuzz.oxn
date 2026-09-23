@@ -1,0 +1,63 @@
+// Prints the FizzBuzz sequence for 1 through 20 // 
+VAR n
+
+LDA 1
+STA n
+
+>loop
+  LDR n
+  LDA 15
+  MOD
+  LDA 0
+  EQU
+  JCN case_fb
+
+  LDR n
+  LDA 3
+  MOD
+  LDA 0
+  EQU
+  JCN case_f
+
+  LDR n
+  LDA 5
+  MOD
+  LDA 0
+  EQU
+  JCN case_b
+
+  LDR n
+  OUT
+  JMP next
+
+>case_fb
+  LDA " 122 122 117 66 122 122 105 70 "
+  DCD * 8
+  JMP next
+
+>case_f
+  LDA " 122 122 105 70 "
+  DCD * 4
+  JMP next
+
+>case_b
+  LDA " 122 122 117 66 "
+  DCD * 4
+  JMP next
+
+>next
+  LDA 10
+  DCD
+
+  LDR n
+  INC
+  STA n
+
+  LDR n
+  LDA 20
+  GTH
+  LDA 0
+  EQU
+  JCN loop
+
+BRK

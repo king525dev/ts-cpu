@@ -64,7 +64,318 @@
                 'LDA 120\n' +
                 'SHW\n' +
                 'BRK\n'
-        }
+        },
+                {
+            name: "Checkerboard",
+            source:
+`// Alternating tall and short bars: 180, 60, 180, 60, ... //
+VAR i
+
+LDA 0
+STA i
+
+>loop
+  LDR i
+  LDA 21
+  LTH
+  JCN body
+  JMP done
+
+>body
+  LDR i
+  LDA 2
+  MOD
+  LDA 0
+  EQU
+  JCN even
+  JMP odd
+
+>even
+  LDA 180
+  JMP push
+
+>odd
+  LDA 60
+
+>push
+  LDR i
+  INC
+  STA i
+  JMP loop
+
+>done
+PRT
+BRK
+`,
+        },
+        {
+            name: "FizzBuzz",
+            source:
+`// Prints the FizzBuzz sequence for 1 through 20 // 
+VAR n
+
+LDA 1
+STA n
+
+>loop
+  LDR n
+  LDA 15
+  MOD
+  LDA 0
+  EQU
+  JCN case_fb
+
+  LDR n
+  LDA 3
+  MOD
+  LDA 0
+  EQU
+  JCN case_f
+
+  LDR n
+  LDA 5
+  MOD
+  LDA 0
+  EQU
+  JCN case_b
+
+  LDR n
+  OUT
+  JMP next
+
+>case_fb
+  LDA " 122 122 117 66 122 122 105 70 "
+  DCD * 8
+  JMP next
+
+>case_f
+  LDA " 122 122 105 70 "
+  DCD * 4
+  JMP next
+
+>case_b
+  LDA " 122 122 117 66 "
+  DCD * 4
+  JMP next
+
+>next
+  LDA 10
+  DCD
+
+  LDR n
+  INC
+  STA n
+
+  LDR n
+  LDA 20
+  GTH
+  LDA 0
+  EQU
+  JCN loop
+
+BRK
+`,
+        },
+        {
+            name: "Countdown",
+            source:
+`//
+# Counts down from 5 to 1, printing each number on its own line. 
+#
+# This demonstrates the Phase-2 features working end to end: 
+#   * VAR       — declares a named variable and allocates a RAM address 
+#   * STA/LDR   — store to / load from that RAM address 
+#   * >label    — a code label the assembler resolves to a bytecode address 
+#   * GTH       — pops two values, pushes 1 if the second is greater 
+#   * JCN       — pops a condition, jumps if it is non-zero 
+//
+
+VAR counter
+
+LDA 5
+STA counter
+
+>loop
+LDR counter        // load counter                  //
+OUT                // print it                      //
+LDR counter        // load counter                  //
+DEC                // decrement                     //
+STA counter        // store back                    //
+LDR counter        // load counter again            //
+LDA 0              // push 0                        //
+GTH                // is counter > 0 ?              //
+JCN loop           // if yes, jump back to \`loop\`   //
+
+BRK
+`,
+        },
+        {
+            name: "Hello",
+            source:
+`//
+# Prints "Hi!" followed by a newline. 
+#
+# DCD pops the top of the stack and prints it as an ASCII character, so we 
+# push the characters in reverse order (the newline first, 'H' last). 
+#
+# The LDA "..." form is a shorthand: it expands to one LDA per value. 
+# The DCD * 4 form repeats DCD four times.
+//
+
+LDA " 10 33 105 72 "
+DCD * 4
+BRK
+`,
+        },
+        {
+            name: "Pyramid of Stars",
+            source:
+`// Prints a Pyramid of asterisks //
+VAR row
+VAR spaces
+VAR stars
+
+LDA 0
+STA row
+
+>outer
+  LDA 4
+  LDR row
+  SUB
+  STA spaces
+
+  >space_loop
+    LDR spaces
+    LDA 0
+    GTH
+    JCN space_done
+
+    LDA 32
+    DCD
+
+    LDR spaces
+    DEC
+    STA spaces
+    JMP space_loop
+
+  >space_done
+
+  LDR row
+  LDA 2
+  MUL
+  INC
+  STA stars
+
+  >star_loop
+    LDR stars
+    LDA 0
+    GTH
+    JCN star_done
+
+    LDA 42
+    DCD
+
+    LDR stars
+    DEC
+    STA stars
+    JMP star_loop
+
+  >star_done
+
+  LDA 10
+  DCD
+
+  LDR row
+  INC
+  STA row
+
+  LDR row
+  LDA 5
+  LTH
+  JCN outer
+
+BRK
+`,
+        },
+        {
+            name: "Bell Curve",
+            source:
+`// A smooth parabola: \`v = 2 * i * (20 − i)\`. Peaks at 200 in the middle, tails off to 0 on both sides //
+VAR i
+VAR v
+
+LDA 0
+STA i
+
+>loop
+  LDR i
+  LDA 21
+  LTH
+  JCN body
+  JMP done
+
+>body
+  LDA 20
+  LDR i
+  SUB
+  LDR i
+  MUL
+  LDA 2
+  MUL
+  STA v
+  LDR v
+
+  LDR i
+  INC
+  STA i
+  JMP loop
+
+>done
+PRT
+BRK
+`,
+        },
+        {
+            name: "Noise",
+            source:
+`// A jagged, unpredictable series. Uses a linear congruential generator: \`seed = (seed · 5 + 1) mod 256\` //
+VAR seed
+VAR i
+
+LDA 42
+STA seed
+LDA 0
+STA i
+
+>loop
+  LDR i
+  LDA 20
+  LTH
+  JCN body
+  JMP done
+
+>body
+  LDR seed
+  LDA 5
+  MUL
+  LDA 1
+  ADD
+  STA seed
+
+  LDR seed
+  LDA 200
+  MOD
+
+  LDR i
+  INC
+  STA i
+  JMP loop
+
+>done
+PRT
+BRK
+`,
+        },
     ];
 
     /* ==========================================================

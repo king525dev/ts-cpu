@@ -1,0 +1,49 @@
+\\ Bars rise, fall, rise again, fall again. Like two triangles glued together. \\
+
+VAR i
+VAR m
+
+LDA 0
+STA i
+
+>loop
+  LDR i
+  LDA 21
+  LTH
+  JCN body
+  JMP done
+
+>body
+  LDR i
+  LDA 10
+  MOD
+  STA m
+
+  LDR m
+  LDA 5
+  GTH
+  JCN high
+  JMP low
+
+>low
+  LDR m
+  LDA 30
+  MUL
+  JMP push
+
+>high
+  LDA 10
+  LDR m
+  SUB
+  LDA 30
+  MUL
+
+>push
+  LDR i
+  INC
+  STA i
+  JMP loop
+
+>done
+PRT
+BRK

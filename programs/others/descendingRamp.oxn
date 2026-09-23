@@ -1,0 +1,28 @@
+// Bars start at 200 on the left and go down by 10 each step, reaching 0 //
+VAR i
+
+LDA 0
+STA i
+
+>loop
+  LDR i
+  LDA 21
+  LTH
+  JCN body
+  JMP done
+
+>body
+  LDA 200
+  LDR i
+  LDA 10
+  MUL
+  SUB
+
+  LDR i
+  INC
+  STA i
+  JMP loop
+
+>done
+PRT
+BRK

@@ -1,0 +1,38 @@
+// Alternating tall and short bars: 180, 60, 180, 60, ... //
+VAR i
+
+LDA 0
+STA i
+
+>loop
+  LDR i
+  LDA 21
+  LTH
+  JCN body
+  JMP done
+
+>body
+  LDR i
+  LDA 2
+  MOD
+  LDA 0
+  EQU
+  JCN even
+  JMP odd
+
+>even
+  LDA 180
+  JMP push
+
+>odd
+  LDA 60
+
+>push
+  LDR i
+  INC
+  STA i
+  JMP loop
+
+>done
+PRT
+BRK

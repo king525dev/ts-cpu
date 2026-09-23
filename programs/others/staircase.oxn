@@ -1,0 +1,28 @@
+\\ Repeating Staircase: Bars cycle: 0, 40, 80, 120, 160, 0, 40, 80, ... \\
+VAR i
+
+LDA 0
+STA i
+
+>loop
+  LDR i
+  LDA 21
+  LTH
+  JCN body
+  JMP done
+
+>body
+  LDR i
+  LDA 5
+  MOD
+  LDA 40
+  MUL
+
+  LDR i
+  INC
+  STA i
+  JMP loop
+
+>done
+PRT
+BRK

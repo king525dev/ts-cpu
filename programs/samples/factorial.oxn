@@ -1,0 +1,26 @@
+VAR n
+VAR result
+
+LDA 1
+STA result
+LDA 5
+STA n
+
+>loop
+  LDR result
+  LDR n
+  MUL
+  STA result
+
+  LDR n
+  DEC
+  STA n
+
+  LDR n
+  LDA 0
+  GTH
+  JCN loop
+
+LDR result
+OUT
+BRK

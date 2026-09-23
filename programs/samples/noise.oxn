@@ -1,0 +1,36 @@
+// A jagged, unpredictable series. Uses a linear congruential generator: `seed = (seed · 5 + 1) mod 256` //
+VAR seed
+VAR i
+
+LDA 42
+STA seed
+LDA 0
+STA i
+
+>loop
+  LDR i
+  LDA 20
+  LTH
+  JCN body
+  JMP done
+
+>body
+  LDR seed
+  LDA 5
+  MUL
+  LDA 1
+  ADD
+  STA seed
+
+  LDR seed
+  LDA 200
+  MOD
+
+  LDR i
+  INC
+  STA i
+  JMP loop
+
+>done
+PRT
+BRK

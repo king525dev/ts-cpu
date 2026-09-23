@@ -1,0 +1,27 @@
+// A hyperbola: v = 200 / (i + 1). Large at first, then flattens //
+VAR i
+
+LDA 0
+STA i
+
+>loop
+  LDR i
+  LDA 15
+  LTH
+  JCN body
+  JMP done
+
+>body
+  LDA 200
+  LDR i
+  INC
+  DIV
+
+  LDR i
+  INC
+  STA i
+  JMP loop
+
+>done
+PRT
+BRK

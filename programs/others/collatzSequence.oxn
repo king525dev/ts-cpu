@@ -1,0 +1,38 @@
+// Starting from 7, prints every step until reaching 1 //
+VAR n
+
+LDA 7
+STA n
+
+>loop
+  LDR n
+  OUT
+
+  LDR n
+  LDA 1
+  EQU
+  JCN done
+
+  LDR n
+  LDA 2
+  MOD
+  LDA 0
+  EQU
+  JCN even
+
+  LDR n
+  LDA 3
+  MUL
+  INC
+  STA n
+  JMP loop
+
+>even
+  LDR n
+  LDA 2
+  DIV
+  STA n
+  JMP loop
+
+>done
+BRK

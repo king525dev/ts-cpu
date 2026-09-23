@@ -1,0 +1,597 @@
+// A smooth parabola: `v = 2 * i * (20 − i)`. Peaks at 200 in the middle, tails off to 0 on both sides //
+VAR i
+VAR v
+
+LDA 0
+STA i
+
+>loop
+  LDR i
+  LDA 21
+  LTH
+  JCN body
+  JMP done
+
+>body
+  LDA 20
+  LDR i
+  SUB
+  LDR i
+  MUL
+  LDA 2
+  MUL
+  STA v
+  LDR v
+
+  LDR i
+  INC
+  STA i
+  JMP loop
+
+>done
+PRT
+BRK// Prints the binary form of 42 → 00101010 //
+VAR n
+VAR mask
+
+LDA 42
+STA n
+LDA 128
+STA mask
+
+>loop
+  LDR mask
+  LDA 0
+  EQU
+  JCN done
+
+  LDR n
+  LDR mask
+  AND
+  LDA 0
+  EQU
+  JCN zero
+
+  LDA 49
+  DCD
+  JMP next
+
+>zero
+  LDA 48
+  DCD
+
+>next
+  LDR mask
+  LDA 1
+  SHR
+  STA mask
+  JMP loop
+
+>done
+LDA 10
+DCD
+BRK// Alternating tall and short bars: 180, 60, 180, 60, ... //
+VAR i
+
+LDA 0
+STA i
+
+>loop
+  LDR i
+  LDA 21
+  LTH
+  JCN body
+  JMP done
+
+>body
+  LDR i
+  LDA 2
+  MOD
+  LDA 0
+  EQU
+  JCN even
+  JMP odd
+
+>even
+  LDA 180
+  JMP push
+
+>odd
+  LDA 60
+
+>push
+  LDR i
+  INC
+  STA i
+  JMP loop
+
+>done
+PRT
+BRK// Starting from 7, prints every step until reaching 1 //
+VAR n
+
+LDA 7
+STA n
+
+>loop
+  LDR n
+  OUT
+
+  LDR n
+  LDA 1
+  EQU
+  JCN done
+
+  LDR n
+  LDA 2
+  MOD
+  LDA 0
+  EQU
+  JCN even
+
+  LDR n
+  LDA 3
+  MUL
+  INC
+  STA n
+  JMP loop
+
+>even
+  LDR n
+  LDA 2
+  DIV
+  STA n
+  JMP loop
+
+>done
+BRKLDA 200
+SHW
+BRKLDA 3
+LDA 5
+SHL
+LDA 7
+SHL
+LDA 128
+SUB
+SHW
+BRK// A hyperbola: v = 200 / (i + 1). Large at first, then flattens //
+VAR i
+
+LDA 0
+STA i
+
+>loop
+  LDR i
+  LDA 15
+  LTH
+  JCN body
+  JMP done
+
+>body
+  LDA 200
+  LDR i
+  INC
+  DIV
+
+  LDR i
+  INC
+  STA i
+  JMP loop
+
+>done
+PRT
+BRK// Bars start at 200 on the left and go down by 10 each step, reaching 0 //
+VAR i
+
+LDA 0
+STA i
+
+>loop
+  LDR i
+  LDA 21
+  LTH
+  JCN body
+  JMP done
+
+>body
+  LDA 200
+  LDR i
+  LDA 10
+  MUL
+  SUB
+
+  LDR i
+  INC
+  STA i
+  JMP loop
+
+>done
+PRT
+BRK// GCD (Euclid's Algorithm): Computes gcd(48, 36) = 12 //
+VAR a
+VAR b
+VAR temp
+
+LDA 48
+STA a
+LDA 36
+STA b
+
+>loop
+  LDR b
+  LDA 0
+  EQU
+  JCN done
+
+  LDR a
+  LDR b
+  MOD
+  STA temp
+
+  LDR b
+  STA a
+
+  LDR temp
+  STA b
+
+  JMP loop
+
+>done
+LDR a
+OUT
+BRK// The Fibonacci sequence, allowed to wrap. Values look random but aren't //
+VAR a
+VAR b
+VAR t
+VAR i
+
+LDA 1
+STA a
+LDA 1
+STA b
+LDA 0
+STA i
+
+>loop
+  LDR i
+  LDA 20
+  LTH
+  JCN body
+  JMP done
+
+>body
+  LDR a
+
+  LDR a
+  STA t
+  LDR b
+  STA a
+  LDR t
+  LDR b
+  ADD
+  STA b
+
+  LDR i
+  INC
+  STA i
+  JMP loop
+
+>done
+PRT
+BRK// Prints the FizzBuzz sequence for 1 through 20 // 
+VAR n
+
+LDA 1
+STA n
+
+>loop
+  LDR n
+  LDA 15
+  MOD
+  LDA 0
+  EQU
+  JCN case_fb
+
+  LDR n
+  LDA 3
+  MOD
+  LDA 0
+  EQU
+  JCN case_f
+
+  LDR n
+  LDA 5
+  MOD
+  LDA 0
+  EQU
+  JCN case_b
+
+  LDR n
+  OUT
+  JMP next
+
+>case_fb
+  LDA " 122 122 117 66 122 122 105 70 "
+  DCD * 8
+  JMP next
+
+>case_f
+  LDA " 122 122 105 70 "
+  DCD * 4
+  JMP next
+
+>case_b
+  LDA " 122 122 117 66 "
+  DCD * 4
+  JMP next
+
+>next
+  LDA 10
+  DCD
+
+  LDR n
+  INC
+  STA n
+
+  LDR n
+  LDA 20
+  GTH
+  LDA 0
+  EQU
+  JCN loop
+
+BRK// Prints the 5×5 table, one product per line //
+VAR i
+VAR j
+
+LDA 1
+STA i
+
+>outer
+  LDA 1
+  STA j
+
+  >inner
+    LDR i
+    LDR j
+    MUL
+    OUT
+
+    LDR j
+    INC
+    STA j
+
+    LDR j
+    LDA 6
+    LTH
+    JCN inner
+
+  LDR i
+  INC
+  STA i
+
+  LDR i
+  LDA 6
+  LTH
+  JCN outer
+
+BRKVAR p
+VAR i
+
+LDA 1
+STA p
+LDA 0
+STA i
+
+>loop
+  LDR p
+  OUT
+
+  LDR p
+  LDA 1
+  SHL
+  STA p
+
+  LDR i
+  INC
+  STA i
+
+  LDR i
+  LDA 8
+  LTH
+  JCN loop
+
+BRK// Checks whether 17 is prime. Prints 1 if yes, 0 if no. //
+VAR n
+VAR d
+VAR is_prime
+
+LDA 17
+STA n
+LDA 2
+STA d
+LDA 1
+STA is_prime
+
+>check
+  LDR d
+  LDR n
+  LTH
+  JCN body
+  JMP done
+
+>body
+  LDR n
+  LDR d
+  MOD
+  LDA 0
+  EQU
+  JCN found
+
+  LDR d
+  INC
+  STA d
+  JMP check
+
+>found
+  LDA 0
+  STA is_prime
+
+>done
+LDR is_prime
+OUT
+BRK// Groups of three tall bars alternating with three short bars //
+VAR i
+
+LDA 0
+STA i
+
+>loop
+  LDR i
+  LDA 21
+  LTH
+  JCN body
+  JMP done
+
+>body
+  LDR i
+  LDA 3
+  DIV
+  LDA 2
+  MOD
+  LDA 0
+  EQU
+  JCN group_a
+  JMP group_b
+
+>group_a
+  LDA 180
+  JMP push
+
+>group_b
+  LDA 60
+
+>push
+  LDR i
+  INC
+  STA i
+  JMP loop
+
+>done
+PRT
+BRK\\ Repeating Staircase: Bars cycle: 0, 40, 80, 120, 160, 0, 40, 80, ... \\
+VAR i
+
+LDA 0
+STA i
+
+>loop
+  LDR i
+  LDA 21
+  LTH
+  JCN body
+  JMP done
+
+>body
+  LDR i
+  LDA 5
+  MOD
+  LDA 40
+  MUL
+
+  LDR i
+  INC
+  STA i
+  JMP loop
+
+>done
+PRT
+BRK// Prints an Isosceles Triangle of asterisks //
+VAR row
+VAR col
+
+LDA 1
+STA row
+
+>outer
+  LDA 1
+  STA col
+
+  >inner
+    LDR col
+    LDR row
+    GTH
+    JCN inner_done
+
+    LDA 42
+    DCD
+
+    LDR col
+    INC
+    STA col
+    JMP inner
+
+  >inner_done
+  LDA 10
+  DCD
+
+  LDR row
+  INC
+  STA row
+
+  LDR row
+  LDA 5
+  GTH
+  JCN outer_done
+  JMP outer
+
+>outer_done
+BRK\\ Bars rise, fall, rise again, fall again. Like two triangles glued together. \\
+
+VAR i
+VAR m
+
+LDA 0
+STA i
+
+>loop
+  LDR i
+  LDA 21
+  LTH
+  JCN body
+  JMP done
+
+>body
+  LDR i
+  LDA 10
+  MOD
+  STA m
+
+  LDR m
+  LDA 5
+  GTH
+  JCN high
+  JMP low
+
+>low
+  LDR m
+  LDA 30
+  MUL
+  JMP push
+
+>high
+  LDA 10
+  LDR m
+  SUB
+  LDA 30
+  MUL
+
+>push
+  LDR i
+  INC
+  STA i
+  JMP loop
+
+>done
+PRT
+BRK

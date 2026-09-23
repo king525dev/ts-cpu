@@ -1,4 +1,4 @@
-\\ Repeating Staircase: Bars cycle: 0, 40, 80, 120, 160, 0, 40, 80, ... \\
+// Repeating Staircase: Bars cycle: 0, 40, 80, 120, 160, 0, 40, 80, ... //
 VAR i
 
 LDA 0

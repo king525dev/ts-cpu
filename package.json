@@ -20,6 +20,7 @@
   ],
   "scripts": {
     "manifest": "node scripts/build-program-manifest.mjs",
+    "sea:bundle": "node scripts/build-sea.mjs",
     "prebuild": "npm run manifest",
     "build": "vite build",
     "test": "vitest"

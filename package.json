@@ -19,6 +19,8 @@
     "LICENSE"
   ],
   "scripts": {
+    "manifest": "node scripts/build-program-manifest.mjs",
+    "prebuild": "npm run manifest",
     "build": "vite build",
     "test": "vitest"
   },

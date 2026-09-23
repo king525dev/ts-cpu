@@ -1,3 +1,5 @@
+// Computes 5! = 120 //
+
 VAR n
 VAR result
 

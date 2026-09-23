@@ -1,0 +1,40 @@
+// Checks whether 17 is prime. Prints 1 if yes, 0 if no. //
+VAR n
+VAR d
+VAR is_prime
+
+LDA 17
+STA n
+LDA 2
+STA d
+LDA 1
+STA is_prime
+
+>check
+  LDR d
+  LDR n
+  LTH
+  JCN body
+  JMP done
+
+>body
+  LDR n
+  LDR d
+  MOD
+  LDA 0
+  EQU
+  JCN found
+
+  LDR d
+  INC
+  STA d
+  JMP check
+
+>found
+  LDA 0
+  STA is_prime
+
+>done
+LDR is_prime
+OUT
+BRK

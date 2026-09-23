@@ -1,0 +1,27 @@
+VAR p
+VAR i
+
+LDA 1
+STA p
+LDA 0
+STA i
+
+>loop
+  LDR p
+  OUT
+
+  LDR p
+  LDA 1
+  SHL
+  STA p
+
+  LDR i
+  INC
+  STA i
+
+  LDR i
+  LDA 8
+  LTH
+  JCN loop
+
+BRK

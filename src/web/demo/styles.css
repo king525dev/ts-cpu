@@ -160,6 +160,8 @@ body {
     background: #fff;
     border: 1px solid #a0a0a0;
     box-shadow: 3px 3px 6px rgba(0, 0, 0, .35);
+    max-height: 150px;
+    overflow-y: auto;
 }
 
 .menu.open .menu-list {

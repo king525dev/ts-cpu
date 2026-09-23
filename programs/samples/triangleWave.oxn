@@ -1,0 +1,33 @@
+// The simplest shape: bars climb from 0 to 200, then descend back to 0 //
+VAR i
+VAR v
+
+LDA 0
+STA i
+
+>loop
+  LDR i
+  LDA 21
+  LTH
+  JCN body
+  JMP done
+
+>body
+  LDA 20
+  LDR i
+  SUB
+  LDR i
+  MUL
+  LDA 2
+  MUL
+  STA v
+  LDR v
+
+  LDR i
+  INC
+  STA i
+  JMP loop
+
+>done
+PRT
+BRK

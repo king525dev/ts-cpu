@@ -1,0 +1,41 @@
+// Prints the binary form of 42 → 00101010 //
+VAR n
+VAR mask
+
+LDA 42
+STA n
+LDA 128
+STA mask
+
+>loop
+  LDR mask
+  LDA 0
+  EQU
+  JCN done
+
+  LDR n
+  LDR mask
+  AND
+  LDA 0
+  EQU
+  JCN zero
+
+  LDA 49
+  DCD
+  JMP next
+
+>zero
+  LDA 48
+  DCD
+
+>next
+  LDR mask
+  LDA 1
+  SHR
+  STA mask
+  JMP loop
+
+>done
+LDA 10
+DCD
+BRK

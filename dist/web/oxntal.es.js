@@ -54,7 +54,7 @@ var Logger = class {
 	start(title = `OXNTAL @ ${(/* @__PURE__ */ new Date()).toLocaleString()}`) {
 		this.startTime = nowMs();
 		this.closed = false;
-		this.raw(`// --> ${title} <-- //`);
+		this.raw(`\n\n// --> ${title} <-- //`);
 		this.raw("");
 	}
 	/** End the session and close the sink. Safe to call more than once. */
@@ -1484,7 +1484,7 @@ var StringLogSink = class {
 function assemble(source, options = {}) {
 	const logSink = options.captureLog ? new StringLogSink() : null;
 	const logger = logSink ? new Logger({ sink: logSink }) : new Logger();
-	if (logSink) logger.start("MyCPU");
+	if (logSink) logger.start(`OXNTAL for WEB @ ${(/* @__PURE__ */ new Date()).toLocaleString("en-GB")}`);
 	try {
 		const bytecode = new Assembler(logger).assemble(source);
 		if (logSink) logger.bytecode(bytecode);
@@ -1518,7 +1518,7 @@ function execute(bytecode, options = {}) {
 	const logger = logSink ? new Logger({ sink: logSink }) : new Logger();
 	const output = new BufferOutput();
 	const display = options.canvas ? new CanvasDisplay(options.canvas) : nullDisplay;
-	if (logSink) logger.start("MyCPU");
+	if (logSink) logger.start(`OXNTAL WEB @ ${(/* @__PURE__ */ new Date()).toLocaleString("en-GB")}`);
 	logger.event("CPU initialised");
 	const cpu = new CPU(output, display, logger);
 	cpu.load([...bytecode]);

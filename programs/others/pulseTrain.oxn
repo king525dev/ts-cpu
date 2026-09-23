@@ -1,0 +1,40 @@
+// Groups of three tall bars alternating with three short bars //
+VAR i
+
+LDA 0
+STA i
+
+>loop
+  LDR i
+  LDA 21
+  LTH
+  JCN body
+  JMP done
+
+>body
+  LDR i
+  LDA 3
+  DIV
+  LDA 2
+  MOD
+  LDA 0
+  EQU
+  JCN group_a
+  JMP group_b
+
+>group_a
+  LDA 180
+  JMP push
+
+>group_b
+  LDA 60
+
+>push
+  LDR i
+  INC
+  STA i
+  JMP loop
+
+>done
+PRT
+BRK

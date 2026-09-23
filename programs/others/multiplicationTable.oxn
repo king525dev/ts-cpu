@@ -1,0 +1,36 @@
+// Prints the 5×5 table, one product per line //
+VAR i
+VAR j
+
+LDA 1
+STA i
+
+>outer
+  LDA 1
+  STA j
+
+  >inner
+    LDR i
+    LDR j
+    MUL
+    OUT
+
+    LDR j
+    INC
+    STA j
+
+    LDR j
+    LDA 6
+    LTH
+    JCN inner
+
+  LDR i
+  INC
+  STA i
+
+  LDR i
+  LDA 6
+  LTH
+  JCN outer
+
+BRK

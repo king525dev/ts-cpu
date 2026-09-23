@@ -1,0 +1,65 @@
+// Prints a Pyramid of asterisks //
+VAR row
+VAR spaces
+VAR stars
+
+LDA 0
+STA row
+
+>outer
+  LDA 4
+  LDR row
+  SUB
+  STA spaces
+
+  >space_loop
+    LDR spaces
+    LDA 0
+    GTH
+    JCN space_done
+
+    LDA 32
+    DCD
+
+    LDR spaces
+    DEC
+    STA spaces
+    JMP space_loop
+
+  >space_done
+
+  LDR row
+  LDA 2
+  MUL
+  INC
+  STA stars
+
+  >star_loop
+    LDR stars
+    LDA 0
+    GTH
+    JCN star_done
+
+    LDA 42
+    DCD
+
+    LDR stars
+    DEC
+    STA stars
+    JMP star_loop
+
+  >star_done
+
+  LDA 10
+  DCD
+
+  LDR row
+  INC
+  STA row
+
+  LDR row
+  LDA 5
+  LTH
+  JCN outer
+
+BRK

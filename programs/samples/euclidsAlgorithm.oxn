@@ -1,0 +1,33 @@
+// GCD (Euclid's Algorithm): Computes gcd(48, 36) = 12 //
+VAR a
+VAR b
+VAR temp
+
+LDA 48
+STA a
+LDA 36
+STA b
+
+>loop
+  LDR b
+  LDA 0
+  EQU
+  JCN done
+
+  LDR a
+  LDR b
+  MOD
+  STA temp
+
+  LDR b
+  STA a
+
+  LDR temp
+  STA b
+
+  JMP loop
+
+>done
+LDR a
+OUT
+BRK

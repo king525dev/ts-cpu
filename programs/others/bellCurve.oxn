@@ -1,0 +1,33 @@
+// A smooth parabola: `v = 2 * i * (20 − i)`. Peaks at 200 in the middle, tails off to 0 on both sides //
+VAR i
+VAR v
+
+LDA 0
+STA i
+
+>loop
+  LDR i
+  LDA 21
+  LTH
+  JCN body
+  JMP done
+
+>body
+  LDA 20
+  LDR i
+  SUB
+  LDR i
+  MUL
+  LDA 2
+  MUL
+  STA v
+  LDR v
+
+  LDR i
+  INC
+  STA i
+  JMP loop
+
+>done
+PRT
+BRK

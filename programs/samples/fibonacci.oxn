@@ -1,0 +1,38 @@
+// Prints the first ten terms starting from F(0) //
+VAR a
+VAR b
+VAR t
+VAR n
+
+LDA 0
+STA a
+LDA 1
+STA b
+LDA 10
+STA n
+
+>loop
+  LDR a
+  OUT
+
+  LDR a
+  LDR b
+  ADD
+  STA t
+
+  LDR b
+  STA a
+
+  LDR t
+  STA b
+
+  LDR n
+  DEC
+  STA n
+
+  LDR n
+  LDA 0
+  GTH
+  JCN loop
+
+BRK

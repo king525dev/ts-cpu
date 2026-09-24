@@ -259,7 +259,7 @@ separately on each target OS.
 ### Prebuilt binaries
 
 Downloadable builds are published on the
-[Releases page](https://github.com/YOUR-USER/ts-cpu/releases) for each
+[Releases page](https://github.com/king525dev/ts-cpu/releases/tag/1.0.0) for each
 tagged version.
 
 **First run on macOS:** Gatekeeper blocks unsigned binaries. Right-click

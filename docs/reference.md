@@ -695,5 +695,6 @@ been stable since 0.2.
 ## 13. Where to go next
 
 - The [tutorial](tutorial.md) teaches you to write programs.
+- The [installation](installation.md) explains how to use the program on different platforms
 - The [concepts](concepts.md) explains how the machine works.
 - The `src/cpu/` directory is the source of truth. Start with `cpu.ts`.

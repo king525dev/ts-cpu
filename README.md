@@ -2,11 +2,12 @@
 
 A stack machine, and the assembler that feeds it.
 
-You can run OXN from a terminal, in a browser, or inside a desktop app.
+You can run OXN from a terminal or in a browser.
 
 - **[Tutorial](docs/tutorial.md)** — I want to write my first program.
 - **[Concepts](docs/concepts.md)** — I want to understand how this CPU works.
 - **[Reference](docs/reference.md)** — What exactly does opcode `0x1A` do?
+- **[Installation](docs/installation.md)** — I want to use/download the program on a specific platform
 
 ---
 

@@ -228,60 +228,34 @@ BRK
 `,
         },
         {
-            name: "Pyramid of Stars",
+            name: "Triangle of Stars",
             source:
-`// Prints a Pyramid of asterisks //
+`// Prints an isosceles triangle of asterisks. //
 VAR row
-VAR spaces
-VAR stars
+VAR col
 
-LDA 0
+LDA 1
 STA row
 
 >outer
-  LDA 4
-  LDR row
-  SUB
-  STA spaces
+  LDA 1
+  STA col
 
-  >space_loop
-    LDR spaces
-    LDA 0
+  >inner
+    LDR col
+    LDR row
     GTH
-    JCN space_done
-
-    LDA 32
-    DCD
-
-    LDR spaces
-    DEC
-    STA spaces
-    JMP space_loop
-
-  >space_done
-
-  LDR row
-  LDA 2
-  MUL
-  INC
-  STA stars
-
-  >star_loop
-    LDR stars
-    LDA 0
-    GTH
-    JCN star_done
+    JCN inner_done
 
     LDA 42
     DCD
 
-    LDR stars
-    DEC
-    STA stars
-    JMP star_loop
+    LDR col
+    INC
+    STA col
+    JMP inner
 
-  >star_done
-
+  >inner_done
   LDA 10
   DCD
 
@@ -291,10 +265,13 @@ STA row
 
   LDR row
   LDA 5
-  LTH
-  JCN outer
+  GTH
+  JCN outer_done
+  JMP outer
 
+>outer_done
 BRK
+
 `,
         },
         {

@@ -1,0 +1,72 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <!--
+    The renderer runs with a strict Content-Security-Policy so that even
+    if the assembly source contained a malicious string (it can't — the
+    CPU has no way to reach the DOM), nothing could escape the page.
+    'unsafe-inline' is permitted for styles because the canvas display
+    sets colours inline; scripts are locked to 'self'.
+  -->
+  <meta http-equiv="Content-Security-Policy"
+        content="default-src 'none'; script-src 'self'; style-src 'self' 'unsafe-inline'; img-src 'self' data:;" />
+  <title>OXN</title>
+  <link rel="stylesheet" href="./styles.css" />
+</head>
+<body>
+
+  <header class="topbar">
+    <span class="brand">OXN</span>
+
+    <div class="menu">
+      <button id="samplesBtn" class="menu-btn">Samples &#9662;</button>
+      <ul id="samplesMenu" class="menu-list"></ul>
+    </div>
+
+    <button id="openBtn" class="btn">Open&hellip;</button>
+    <input id="fileInput" type="file" accept=".oxn,.txt" hidden />
+
+    <span class="spacer"></span>
+
+    <button id="runBtn" class="btn primary">Run</button>
+    <button id="runLogBtn" class="btn">Run + Log</button>
+    <button id="clearBtn" class="btn">Clear output</button>
+  </header>
+
+  <main class="workspace">
+
+    <section class="panel editor-panel">
+      <div class="panel-header">
+        <span>Source</span>
+        <span id="info" class="dim"></span>
+      </div>
+      <textarea id="source" spellcheck="false" autocomplete="off"
+                autocapitalize="off"></textarea>
+    </section>
+
+    <section class="panel output-panel">
+      <div class="panel-header">Output</div>
+      <pre id="output"></pre>
+      <div class="canvas-wrap">
+        <canvas id="screen" width="256" height="256"></canvas>
+      </div>
+    </section>
+
+    <section class="panel log-panel collapsed">
+      <div class="panel-header">
+        <span>Log</span>
+        <button id="logToggle" class="mini-btn">show</button>
+      </div>
+      <pre id="log"></pre>
+    </section>
+
+  </main>
+
+  <footer class="statusbar">
+    <span id="status">Ready</span>
+  </footer>
+
+  <script src="./app.js"></script>
+</body>
+</html>

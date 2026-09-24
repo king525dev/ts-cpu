@@ -18,12 +18,40 @@
     "README.md",
     "LICENSE"
   ],
+  "build": {
+  "main": "dist/desktop/main.cjs",
+  "build": {
+    "appId": "dev.king525.oxn",
+    "productName": "Oxn",
+    "files": [
+      "dist/desktop/**/*",
+      "package.json"
+    ],
+    "directories": {
+      "output": "release"
+    },
+    "mac": {
+      "target": "dmg",
+      "category": "public.app-category.developer-tools"
+    },
+    "win": {
+      "target": "nsis"
+    },
+    "linux": {
+      "target": "AppImage",
+      "category": "Development"
+    }
+  }
+},
   "scripts": {
     "manifest": "node scripts/build-program-manifest.mjs",
     "sea:bundle": "node scripts/build-sea.mjs",
     "prebuild": "npm run manifest",
     "build": "vite build",
-    "test": "vitest"
+    "test": "vitest",
+    "desktop:build": "node scripts/build-desktop.mjs",
+    "desktop:dev":   "npm run desktop:build && electron dist/desktop/main.cjs",
+    "desktop:dist":  "npm run desktop:build && electron-builder"
   },
   "devDependencies": {
     "@types/node": "^26.2.0",

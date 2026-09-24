@@ -1,0 +1,5 @@
+{
+  "main": "/home/ore/Documents/repositories/ts-cpu/dist/sea/cli.cjs",
+  "output": "/home/ore/Documents/repositories/ts-cpu/dist/sea/mycpu.blob",
+  "disableExperimentalSEAWarning": true
+}
